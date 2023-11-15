@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/providers/toDo_provider.dart';
 import 'package:to_do_app/screens/settings.dart';
 import 'package:to_do_app/screens/new_items.dart';
+import 'package:to_do_app/widgets/toDo_tile.dart';
 
 // enum for the settings value
 enum MenuAction { settings, about, rate }
@@ -32,29 +33,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body = ListView.builder(
         itemCount: listOfToDo.length,
         itemBuilder: (context, index) {
-          return Container(
-            width: 100,
-            height: 100,
-            decoration:
-                BoxDecoration(color: Theme.of(context).colorScheme.primary),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Checkbox(
-                      key: Key(listOfToDo[index].id),
-                      value: isChecked,
-                      onChanged: (value) {
-                        setState(() {
-                          isChecked = !isChecked;
-                        });
-                      },
-                    )
-                  ],
-                )
-              ],
-            ),
-          );
+          return const ToDoTile();
         },
       );
     }

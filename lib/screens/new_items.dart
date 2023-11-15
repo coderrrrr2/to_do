@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -18,9 +16,12 @@ class TasksScreen extends ConsumerStatefulWidget {
 class _TasksScreenState extends ConsumerState<TasksScreen> {
   final formKey = GlobalKey<FormState>();
   final taskController = TextEditingController();
+  final timeController = TextEditingController();
   String enteredTask = '';
   DateTime? enteredDate;
   bool textformKeyIsEmpty = true;
+  bool isDateSelected = false;
+  TimeOfDay? selectedTime;
 
   void showDatePickerDialog() async {
     final now = DateTime.now();
@@ -36,8 +37,25 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     });
   }
 
+  void showTimePickerDialog() async {
+    final pickedTime = await showTimePicker(
+      initialTime: TimeOfDay.now(),
+      context: context,
+    );
+    setState(() {
+      selectedTime = pickedTime;
+    });
+  }
+
+  String formatTime(TimeOfDay timeOfDay) {
+    final hour = timeOfDay.hourOfPeriod;
+    final minute = timeOfDay.minute.toString().padLeft(2, '0');
+    final period = timeOfDay.period == DayPeriod.am ? 'AM' : 'PM';
+
+    return '$hour:$minute $period';
+  }
+
   void submitformKey(ToDo todo) {
-    log(enteredDate.toString());
     ref.read(listManipulatorProvider.notifier).add(todo);
     Navigator.of(context).pop();
   }
@@ -61,6 +79,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
           title: const Text('New Task'),
         ),
         body: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Form(
               key: formKey,
@@ -80,7 +99,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                     ),
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 30,
                   ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -99,6 +118,27 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                           onPressed: showDatePickerDialog,
                           icon: const Icon(Icons.calendar_month))
                     ],
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.all(15),
+                        width: 300,
+                        child: TextField(
+                          controller: timeController,
+                          decoration: InputDecoration(
+                            labelText: selectedTime == null
+                                ? 'Time not set(all day)'
+                                : formatTime(selectedTime!),
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                          onPressed: showTimePickerDialog,
+                          icon: const Icon(Icons.timelapse))
+                    ],
                   )
                 ],
               ),
@@ -108,13 +148,15 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
         floatingActionButton: !textformKeyIsEmpty
             ? FloatingActionButton(
                 onPressed: () {
-                  if (enteredDate != null) {
-                    submitformKey(
-                        ToDo(taskName: enteredTask, date: enteredDate!));
+                  if (enteredDate != null && selectedTime != null) {
+                    submitformKey(ToDo(
+                        taskName: enteredTask,
+                        date: enteredDate!,
+                        time: selectedTime!));
                     return;
                   }
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("You must pick a date")));
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("You must select all options")));
                 },
                 child: const Icon(Icons.check),
               )
