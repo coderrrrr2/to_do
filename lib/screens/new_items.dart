@@ -16,8 +16,6 @@ class TasksScreen extends ConsumerStatefulWidget {
 class _TasksScreenState extends ConsumerState<TasksScreen> {
   final formKey = GlobalKey<FormState>();
   final taskController = TextEditingController();
-  final timeController = TextEditingController();
-  String enteredTask = '';
   DateTime? enteredDate;
   bool textformKeyIsEmpty = true;
   bool isDateSelected = false;
@@ -25,13 +23,14 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
 
   void showDatePickerDialog() async {
     final now = DateTime.now();
-    final firstDate = DateTime(now.year - 1, now.month, now.day);
+    final firstDate = DateTime(now.year, now.month, now.day);
+    final lastDate = DateTime(now.year + 18, now.month, now.day);
 
     final pickedDate = await showDatePicker(
         context: context,
         initialDate: now,
         firstDate: firstDate,
-        lastDate: now);
+        lastDate: lastDate);
     setState(() {
       enteredDate = pickedDate;
     });
@@ -45,14 +44,6 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     setState(() {
       selectedTime = pickedTime;
     });
-  }
-
-  String formatTime(TimeOfDay timeOfDay) {
-    final hour = timeOfDay.hourOfPeriod;
-    final minute = timeOfDay.minute.toString().padLeft(2, '0');
-    final period = timeOfDay.period == DayPeriod.am ? 'AM' : 'PM';
-
-    return '$hour:$minute $period';
   }
 
   void submitformKey(ToDo todo) {
@@ -72,94 +63,108 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     super.initState();
   }
 
+  String formatTime(TimeOfDay timeOfDay) {
+    final hour = timeOfDay.hourOfPeriod;
+    final minute = timeOfDay.minute.toString().padLeft(2, '0');
+    final period = timeOfDay.period == DayPeriod.am ? 'AM' : 'PM';
+
+    return '$hour:$minute $period';
+  }
+
+  @override
+  void dispose() {
+    taskController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('New Task'),
-        ),
-        body: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Form(
-              key: formKey,
-              child: Column(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.all(15),
-                    child: TextFormField(
-                      controller: taskController,
-                      decoration: const InputDecoration(
-                        labelText: "What is meant to be done",
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+          appBar: AppBar(
+            title: const Text('New Task'),
+          ),
+          body: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.all(15),
+                      child: TextFormField(
+                        controller: taskController,
+                        decoration: const InputDecoration(
+                          labelText: "What is meant to be done",
+                        ),
+                        keyboardType: TextInputType.text,
                       ),
-                      keyboardType: TextInputType.text,
-                      onSaved: (value) {
-                        enteredTask = value!;
-                      },
                     ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Container(
-                        width: 322,
-                        margin: const EdgeInsets.all(15),
-                        child: Text(enteredDate == null
-                            ? "Date Not Set"
-                            : formatter.format(enteredDate!)),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      IconButton(
-                          onPressed: showDatePickerDialog,
-                          icon: const Icon(Icons.calendar_month))
-                    ],
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.all(15),
-                        width: 300,
-                        child: TextField(
-                          controller: timeController,
-                          decoration: InputDecoration(
-                            labelText: selectedTime == null
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Container(
+                          width: 322,
+                          margin: const EdgeInsets.all(15),
+                          child: Text(enteredDate == null
+                              ? "Date Not Set"
+                              : formatter.format(enteredDate!)),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        IconButton(
+                            onPressed: showDatePickerDialog,
+                            icon: const Icon(Icons.calendar_month))
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.all(15),
+                          width: 300,
+                          child: Text(
+                            selectedTime == null
                                 ? 'Time not set(all day)'
                                 : formatTime(selectedTime!),
                           ),
                         ),
-                      ),
-                      const Spacer(),
-                      IconButton(
-                          onPressed: showTimePickerDialog,
-                          icon: const Icon(Icons.timelapse))
-                    ],
-                  )
-                ],
+                        const Spacer(),
+                        IconButton(
+                            onPressed: showTimePickerDialog,
+                            icon: const Icon(Icons.timelapse))
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-        floatingActionButton: !textformKeyIsEmpty
-            ? FloatingActionButton(
-                onPressed: () {
-                  if (enteredDate != null && selectedTime != null) {
-                    submitformKey(ToDo(
-                        taskName: enteredTask,
-                        date: enteredDate!,
-                        time: selectedTime!));
-                    return;
-                  }
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("You must select all options")));
-                },
-                child: const Icon(Icons.check),
-              )
-            : null);
+            ],
+          ),
+          floatingActionButton: !textformKeyIsEmpty
+              ? FloatingActionButton(
+                  onPressed: () {
+                    if (enteredDate != null && selectedTime != null) {
+                      submitformKey(ToDo(
+                          taskName: taskController.text,
+                          date: enteredDate!,
+                          time: selectedTime!));
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("You must select all options")));
+                  },
+                  child: const Icon(Icons.check),
+                )
+              : null),
+    );
   }
 }

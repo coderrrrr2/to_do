@@ -29,3 +29,4 @@ flutter:
   uses-material-design: true
   assets:
    - assets/images/fluent-mdl2_vacation.png
+   - assets/images/Nothing to do.png
