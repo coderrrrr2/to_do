@@ -150,7 +150,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Container(
               margin: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
                   borderRadius: BorderRadius.circular(10)),
               width: 400,
               height: 60,
@@ -171,12 +171,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
             ),
             const SizedBox(
-              height: 10,
+              height: 30,
             ),
             Container(
               margin: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
                   borderRadius: BorderRadius.circular(10)),
               width: 400,
               height: 60,
@@ -197,12 +197,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
             ),
             const SizedBox(
-              height: 10,
+              height: 30,
             ),
             Container(
               margin: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
                   borderRadius: BorderRadius.circular(10)),
               width: 400,
               height: 60,
@@ -228,7 +228,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
             ),
             const SizedBox(
-              height: 10,
+              height: 30,
             ),
             InkWell(
               onTap: () {},
@@ -238,7 +238,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       color: Theme.of(context)
                           .colorScheme
                           .primary
-                          .withOpacity(0.2),
+                          .withOpacity(0.7),
                       borderRadius: BorderRadius.circular(10)),
                   width: 400,
                   height: 60,
@@ -248,7 +248,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   )),
             ),
             const SizedBox(
-              height: 10,
+              height: 30,
             ),
             InkWell(
               onTap: () {},
@@ -258,7 +258,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       color: Theme.of(context)
                           .colorScheme
                           .primary
-                          .withOpacity(0.2),
+                          .withOpacity(0.7),
                       borderRadius: BorderRadius.circular(10)),
                   width: 400,
                   height: 60,
@@ -268,7 +268,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   )),
             ),
             const SizedBox(
-              height: 10,
+              height: 20,
             ),
             InkWell(
               onTap: showTimeFormatDialogBox,
@@ -276,7 +276,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 margin: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
                     color:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                        Theme.of(context).colorScheme.primary.withOpacity(0.7),
                     borderRadius: BorderRadius.circular(10)),
                 width: 400,
                 height: 60,
@@ -291,9 +291,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 10,
             ),
           ],
         ),

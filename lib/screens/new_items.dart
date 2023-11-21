@@ -96,8 +96,13 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                       margin: const EdgeInsets.all(15),
                       child: TextFormField(
                         controller: taskController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: "What is meant to be done",
+                          labelStyle: TextStyle(
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .color),
                         ),
                         keyboardType: TextInputType.text,
                       ),
@@ -111,16 +116,25 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                         Container(
                           width: 322,
                           margin: const EdgeInsets.all(15),
-                          child: Text(enteredDate == null
-                              ? "Date Not Set"
-                              : formatter.format(enteredDate!)),
+                          child: Text(
+                            enteredDate == null
+                                ? "Date Not Set"
+                                : formatter.format(enteredDate!),
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .color),
+                          ),
                         ),
                         const SizedBox(
                           width: 10,
                         ),
                         IconButton(
-                            onPressed: showDatePickerDialog,
-                            icon: const Icon(Icons.calendar_month))
+                          onPressed: showDatePickerDialog,
+                          icon: const Icon(Icons.calendar_month),
+                          color: Colors.white,
+                        )
                       ],
                     ),
                     const SizedBox(
@@ -136,12 +150,19 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                             selectedTime == null
                                 ? 'Time not set(all day)'
                                 : formatTime(selectedTime!),
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .color),
                           ),
                         ),
                         const Spacer(),
                         IconButton(
-                            onPressed: showTimePickerDialog,
-                            icon: const Icon(Icons.timelapse))
+                          onPressed: showTimePickerDialog,
+                          icon: const Icon(Icons.timelapse),
+                          color: Colors.white,
+                        )
                       ],
                     )
                   ],
