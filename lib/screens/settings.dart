@@ -185,7 +185,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 child: Row(
                   children: [
                     const Text('Notifications'),
-                    const Spacer(),
+                    const SizedBox(
+                      width: 190,
+                    ),
                     Expanded(
                         child: SwitchListTile(
                             value: isNotifications,

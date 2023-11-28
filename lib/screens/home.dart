@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/models/to_do.dart';
@@ -18,6 +17,15 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  bool isSearching = false;
+  Widget? appBarContent;
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(listManipulatorProvider.notifier).getDataBase();
+  }
+
   bool isChecked = false;
 
   void removeToDo(ToDo todo) {
@@ -55,6 +63,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final listOfToDo = ref.watch(listManipulatorProvider);
+    appBarContent = Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        IconButton(
+            onPressed: () {
+              setState(() {
+                isSearching = !isSearching;
+              });
+            },
+            icon: const Icon(Icons.search)),
+        PopupMenuButton<MenuAction>(
+          itemBuilder: (context) {
+            return [
+              PopupMenuItem(
+                value: MenuAction.settings,
+                child: const Text('Settings'),
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const SettingsScreen(),
+                  ));
+                },
+              ),
+              const PopupMenuItem(
+                value: MenuAction.about,
+                child: Text('About Us'),
+              ),
+              const PopupMenuItem(
+                value: MenuAction.rate,
+                child: Text('Rate Us'),
+              ),
+            ];
+          },
+        )
+      ],
+    );
     Widget body = Padding(
       padding: const EdgeInsets.only(
         top: 300,
@@ -99,47 +142,72 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         },
       );
     }
-    return Scaffold(
-        appBar: AppBar(
-          actions: [
-            PopupMenuButton<MenuAction>(
-              itemBuilder: (context) {
-                return [
-                  PopupMenuItem(
-                    value: MenuAction.settings,
-                    child: const Text('Settings'),
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const SettingsScreen(),
-                      ));
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            actions: [
+              isSearching
+                  ? appBarContent = Row(
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(Icons.search)),
+                                const SizedBox(
+                                  height: 50,
+                                  width: 300,
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      hintText: 'Search...',
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        )
+                      ],
+                    )
+                  : appBarContent!
+            ],
+            leading: isSearching
+                ? IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isSearching = !isSearching;
+                      });
                     },
-                  ),
-                  const PopupMenuItem(
-                    value: MenuAction.about,
-                    child: Text('About Us'),
-                  ),
-                  const PopupMenuItem(
-                    value: MenuAction.rate,
-                    child: Text('Rate Us'),
-                  ),
-                ];
+                    icon: const Icon(Icons.arrow_back_sharp))
+                : IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.calendar_month,
+                      size: 35,
+                    )),
+          ),
+          floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const TasksScreen(),
+                ));
               },
-            )
-          ],
-          leading: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.calendar_month,
-                size: 35,
-              )),
-        ),
-        floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const TasksScreen(),
-              ));
-            },
-            child: const Icon(Icons.add)),
-        body: body);
+              child: const Icon(Icons.add)),
+          body: SafeArea(child: body)),
+    );
   }
 }
