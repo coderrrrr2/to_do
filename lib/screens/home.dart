@@ -4,6 +4,7 @@ import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/toDo_provider.dart';
 import 'package:to_do_app/screens/settings.dart';
 import 'package:to_do_app/screens/new_items.dart';
+import 'package:to_do_app/screens/to_do_details.dart';
 import 'package:to_do_app/widgets/toDo_tile.dart';
 
 // enum for the settings value
@@ -19,12 +20,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool isSearching = false;
   Widget? appBarContent;
-
-  @override
-  void initState() {
-    super.initState();
-    ref.read(listManipulatorProvider.notifier).getDataBase();
-  }
 
   bool isChecked = false;
 
@@ -120,22 +115,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.only(top: 8, left: 4, right: 4),
-            child: Dismissible(
-              key: Key(listOfToDo[index].id),
-              onDismissed: (direction) async {
-                removeToDo(listOfToDo[index]);
-              },
-              direction: DismissDirection.horizontal,
-              // movementDuration: const Duration(milliseconds: 900),
-              confirmDismiss: (direction) async => await returnTodoStatus(),
-              dismissThresholds: const {
-                DismissDirection.startToEnd: 0.6,
-                DismissDirection.endToStart: 0.6,
-              },
-              child: ToDoTile(
-                task: listOfToDo[index].taskName,
-                time: listOfToDo[index].time,
-                id: listOfToDo[index].id,
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ToDoDetails(todo: listOfToDo[index]),
+              )),
+              child: Dismissible(
+                key: Key(listOfToDo[index].id),
+                onDismissed: (direction) async {
+                  removeToDo(listOfToDo[index]);
+                },
+                direction: DismissDirection.horizontal,
+                // movementDuration: const Duration(milliseconds: 900),
+                confirmDismiss: (direction) async => await returnTodoStatus(),
+                dismissThresholds: const {
+                  DismissDirection.startToEnd: 0.6,
+                  DismissDirection.endToStart: 0.6,
+                },
+                child: ToDoTile(
+                  todo: listOfToDo[index],
+                ),
               ),
             ),
           );

@@ -4,17 +4,14 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:to_do_app/models/to_do.dart';
 
 final formatter = DateFormat.yMd();
 
 class ToDoTile extends StatefulWidget {
-  const ToDoTile(
-      {super.key, required this.task, required this.time, required this.id});
+  const ToDoTile({super.key, required this.todo});
 
-  final String task;
-  final TimeOfDay time;
-  final String id;
-
+  final ToDo todo;
   @override
   State<ToDoTile> createState() => _ToDoTileState();
 }
@@ -45,18 +42,21 @@ class _ToDoTileState extends State<ToDoTile> {
             Row(
               children: [
                 Checkbox(
-                  key: Key(widget.id),
+                  key: Key(widget.todo.id),
                   value: isChecked,
                   onChanged: (value) {
                     setState(() {
                       isChecked = value!;
-                      log(widget.task);
+                      log(widget.todo.taskName);
                     });
                   },
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: [Text(widget.task), Text(formatTime(widget.time))],
+                  children: [
+                    Text(widget.todo.taskName),
+                    Text(formatTime(widget.todo.time))
+                  ],
                 )
               ],
             )

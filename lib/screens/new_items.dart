@@ -134,7 +134,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                         IconButton(
                           onPressed: showDatePickerDialog,
                           icon: const Icon(Icons.calendar_month),
-                          color: Colors.white,
+                          color: Colors.black,
                         )
                       ],
                     ),
@@ -162,7 +162,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                         IconButton(
                           onPressed: showTimePickerDialog,
                           icon: const Icon(Icons.timelapse),
-                          color: Colors.white,
+                          color: Colors.black,
                         )
                       ],
                     )

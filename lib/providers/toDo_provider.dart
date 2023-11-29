@@ -5,25 +5,25 @@ import 'package:path/path.dart' as path;
 
 import 'package:sqflite/sqlite_api.dart';
 
+Future<Database> getDataBase() async {
+  final dbPath = await sql.getDatabasesPath();
+  final database = await sql.openDatabase(
+    path.join(dbPath, 'TodoDb'),
+    onCreate: (dbInstance, version) async {
+      await dbInstance.execute(
+        "CREATE TABLE user_todo(id TEXT PRIMARY KEY, task TEXT, time TEXT, date DATETIME)",
+      );
+
+      await dbInstance.execute(
+        "CREATE TABLE user_settings(isNotifications BOOL, isLightMode BOOL, chosenLanguage TEXT, timeFormat TEXT)",
+      );
+    },
+  );
+  return database;
+}
+
 class ListManipulator extends StateNotifier<List<ToDo>> {
   ListManipulator() : super([]);
-
-  Future<Database> getDataBase() async {
-    final dbPath = await sql.getDatabasesPath();
-    final database = await sql.openDatabase(
-      path.join(dbPath, 'TodoDb'),
-      onCreate: (dbInstance, version) async {
-        await dbInstance.execute(
-          "CREATE TABLE user_todo(id TEXT PRIMARY KEY, task TEXT, time TEXT, date DATETIME)",
-        );
-
-        await dbInstance.execute(
-          "CREATE TABLE user_settings(isNotifications BOOL, isLightMode BOOL, chosenLanguage TEXT, timeFormat TEXT)",
-        );
-      },
-    );
-    return database;
-  }
 
   void add(ToDo todo) {
     state = [...state, todo];
