@@ -20,6 +20,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool isSearching = false;
   Widget? appBarContent;
+  bool isEdited = false;
 
   bool isChecked = false;
 

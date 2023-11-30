@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -55,8 +57,11 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
     formattedTime = formatTime(selectedTime!);
   }
 
-  void submitformKey(ToDo todo) {
-    ref.read(listManipulatorProvider.notifier).add(todo);
+  void submitForm(ToDo todo) {
+    final newToDo = todo;
+    ref.read(listManipulatorProvider.notifier).remove(widget.todo);
+    ref.read(listManipulatorProvider.notifier).add(newToDo);
+
     Navigator.of(context).pop();
   }
 
@@ -64,10 +69,10 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
   void initState() {
     taskController = TextEditingController(text: widget.todo.taskName);
     taskController.addListener(updateIfEmpty);
-
+    selectedTime = widget.todo.time;
     formattedTime = formatTime(widget.todo.time);
     enteredDate = widget.todo.date;
-
+    log(" $enteredDate is the entered date");
     super.initState();
   }
 
@@ -183,12 +188,12 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
               ),
             ],
           ),
-          floatingActionButton: !textformKeyIsEmpty &&
+          floatingActionButton: !textformKeyIsEmpty ||
                   taskController.text.isNotEmpty
               ? FloatingActionButton(
                   onPressed: () {
                     if (enteredDate != null && selectedTime != null) {
-                      submitformKey(ToDo(
+                      submitForm(ToDo(
                           taskName: taskController.text,
                           date: enteredDate!,
                           time: selectedTime!));
