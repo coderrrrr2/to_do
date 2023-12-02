@@ -20,7 +20,7 @@ class ToDoDetails extends ConsumerStatefulWidget {
 
 class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
   late String formattedTime;
-  var taskController;
+  TextEditingController? taskController;
 
   final formKey = GlobalKey<FormState>();
 
@@ -69,7 +69,7 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
   @override
   void initState() {
     taskController = TextEditingController(text: widget.todo.taskName);
-    taskController.addListener(updateIfEmpty);
+    taskController!.addListener(updateIfEmpty);
     selectedTime = widget.todo.time;
     formattedTime = formatTime(widget.todo.time);
     enteredDate = widget.todo.date;
@@ -79,7 +79,7 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
 
   void updateIfEmpty() {
     setState(() {
-      textformKeyIsEmpty = taskController.text.isEmpty;
+      textformKeyIsEmpty = taskController!.text.isEmpty;
     });
   }
 
@@ -93,7 +93,7 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
 
   @override
   void dispose() {
-    taskController.dispose();
+    taskController!.dispose();
     super.dispose();
   }
 
@@ -102,7 +102,6 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
     final theme = ref.watch(settingsProvider);
 
     return GestureDetector(
-      behavior: HitTestBehavior.translucent,
       onTap: () {
         FocusScope.of(context).unfocus();
       },
@@ -121,6 +120,11 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
                     Container(
                       margin: const EdgeInsets.all(15),
                       child: TextFormField(
+                        style: TextStyle(
+                          color: theme.isLightMode == true
+                              ? Colors.black
+                              : Colors.white,
+                        ),
                         controller: taskController,
                         decoration: InputDecoration(
                           labelText: "What is meant to be done",
@@ -151,9 +155,7 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
                                     .color),
                           ),
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
+                        const Spacer(),
                         IconButton(
                           onPressed: showDatePickerDialog,
                           icon: const Icon(Icons.calendar_month),
@@ -197,12 +199,12 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
             ],
           ),
           floatingActionButton: !textformKeyIsEmpty ||
-                  taskController.text.isNotEmpty
+                  taskController!.text.isNotEmpty
               ? FloatingActionButton(
                   onPressed: () {
                     if (enteredDate != null && selectedTime != null) {
                       submitForm(ToDo(
-                          taskName: taskController.text,
+                          taskName: taskController!.text,
                           date: enteredDate!,
                           time: selectedTime!));
                       return;

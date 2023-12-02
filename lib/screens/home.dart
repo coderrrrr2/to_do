@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/models/to_do.dart';
+import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/providers/toDo_provider.dart';
 import 'package:to_do_app/screens/settings.dart';
 import 'package:to_do_app/screens/new_items.dart';
@@ -23,7 +24,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool isEdited = false;
 
   bool isChecked = false;
-
   void removeToDo(ToDo todo) {
     ref.read(listManipulatorProvider.notifier).remove(todo);
   }
@@ -59,6 +59,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final listOfToDo = ref.watch(listManipulatorProvider);
+    final theme = ref.watch(settingsProvider);
     appBarContent = Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -142,7 +143,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       );
     }
     return GestureDetector(
-      behavior: HitTestBehavior.translucent,
       onTap: () {
         FocusScope.of(context).unfocus();
       },
@@ -162,11 +162,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 IconButton(
                                     onPressed: () {},
                                     icon: const Icon(Icons.search)),
-                                const SizedBox(
+                                SizedBox(
                                   height: 50,
                                   width: 300,
                                   child: TextField(
-                                    decoration: InputDecoration(
+                                    style: TextStyle(
+                                      color: theme.isLightMode == true
+                                          ? Colors.black
+                                          : Colors.white,
+                                    ),
+                                    decoration: const InputDecoration(
                                       hintText: 'Search...',
                                       border: OutlineInputBorder(
                                         borderSide: BorderSide.none,

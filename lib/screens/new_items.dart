@@ -78,8 +78,6 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     super.dispose();
   }
 
-  FocusNode _focusNode = FocusNode();
-
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(settingsProvider);
@@ -102,7 +100,11 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                     Container(
                       margin: const EdgeInsets.all(15),
                       child: TextFormField(
-                        focusNode: _focusNode,
+                        style: TextStyle(
+                          color: theme.isLightMode == true
+                              ? Colors.black
+                              : Colors.white,
+                        ),
                         controller: taskController,
                         decoration: InputDecoration(
                           labelText: "What is meant to be done",
