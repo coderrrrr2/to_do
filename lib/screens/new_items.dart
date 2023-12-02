@@ -78,6 +78,8 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     super.dispose();
   }
 
+  FocusNode _focusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(settingsProvider);
@@ -100,6 +102,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                     Container(
                       margin: const EdgeInsets.all(15),
                       child: TextFormField(
+                        focusNode: _focusNode,
                         controller: taskController,
                         decoration: InputDecoration(
                           labelText: "What is meant to be done",
@@ -132,9 +135,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
+                        const Spacer(),
                         IconButton(
                           onPressed: showDatePickerDialog,
                           icon: const Icon(Icons.calendar_month),
