@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:to_do_app/models/to_do.dart';
+import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/providers/toDo_provider.dart';
 
 final formatter = DateFormat.yMd();
@@ -79,7 +80,10 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = ref.watch(settingsProvider);
+
     return GestureDetector(
+      behavior: HitTestBehavior.translucent,
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
           resizeToAvoidBottomInset: false,
@@ -100,10 +104,10 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                         decoration: InputDecoration(
                           labelText: "What is meant to be done",
                           labelStyle: TextStyle(
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .color),
+                            color: theme.isLightMode == true
+                                ? Colors.black
+                                : Colors.white,
+                          ),
                         ),
                         keyboardType: TextInputType.text,
                       ),
@@ -122,10 +126,10 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                                 ? "Date Not Set"
                                 : formatter.format(enteredDate!),
                             style: TextStyle(
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium!
-                                    .color),
+                              color: theme.isLightMode == true
+                                  ? Colors.black
+                                  : Colors.white,
+                            ),
                           ),
                         ),
                         const SizedBox(
@@ -134,7 +138,9 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                         IconButton(
                           onPressed: showDatePickerDialog,
                           icon: const Icon(Icons.calendar_month),
-                          color: Colors.black,
+                          color: theme.isLightMode == true
+                              ? Colors.black
+                              : Colors.white,
                         )
                       ],
                     ),
@@ -152,17 +158,19 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                                 ? 'Time not set(all day)'
                                 : formatTime(selectedTime!),
                             style: TextStyle(
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium!
-                                    .color),
+                              color: theme.isLightMode == true
+                                  ? Colors.black
+                                  : Colors.white,
+                            ),
                           ),
                         ),
                         const Spacer(),
                         IconButton(
                           onPressed: showTimePickerDialog,
                           icon: const Icon(Icons.timelapse),
-                          color: Colors.black,
+                          color: theme.isLightMode == true
+                              ? Colors.black
+                              : Colors.white,
                         )
                       ],
                     )

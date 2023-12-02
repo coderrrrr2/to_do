@@ -3,22 +3,24 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:to_do_app/models/to_do.dart';
+import 'package:to_do_app/providers/settings_provider.dart';
 
 final formatter = DateFormat.yMd();
 
-class ToDoTile extends StatefulWidget {
+class ToDoTile extends ConsumerStatefulWidget {
   const ToDoTile({super.key, required this.todo});
 
   final ToDo todo;
   @override
-  State<ToDoTile> createState() => _ToDoTileState();
+  ConsumerState<ToDoTile> createState() => _ToDoTileState();
 }
 
 bool isChecked = false;
 
-class _ToDoTileState extends State<ToDoTile> {
+class _ToDoTileState extends ConsumerState<ToDoTile> {
   String formatTime(TimeOfDay timeOfDay) {
     final hour = timeOfDay.hourOfPeriod;
     final minute = timeOfDay.minute.toString().padLeft(2, '0');
@@ -29,6 +31,8 @@ class _ToDoTileState extends State<ToDoTile> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = ref.watch(settingsProvider);
+
     return Container(
       margin: const EdgeInsets.all(10),
       width: 200,
@@ -54,8 +58,23 @@ class _ToDoTileState extends State<ToDoTile> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(widget.todo.taskName),
-                    Text(formatTime(widget.todo.time))
+                    Text(
+                      widget.todo.taskName,
+                      style: TextStyle(
+                        color: theme.isLightMode == true
+                            ? Colors.black
+                            : Colors.white,
+                      ),
+                    ),
+                    Text(
+                        formatTime(
+                          widget.todo.time,
+                        ),
+                        style: TextStyle(
+                          color: theme.isLightMode == true
+                              ? Colors.black
+                              : Colors.white,
+                        ))
                   ],
                 )
               ],

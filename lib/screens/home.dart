@@ -142,6 +142,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       );
     }
     return GestureDetector(
+      behavior: HitTestBehavior.translucent,
       onTap: () {
         FocusScope.of(context).unfocus();
       },

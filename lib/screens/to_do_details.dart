@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:to_do_app/models/to_do.dart';
+import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/providers/toDo_provider.dart';
 
 final formatter = DateFormat.yMd();
@@ -98,7 +99,10 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = ref.watch(settingsProvider);
+
     return GestureDetector(
+      behavior: HitTestBehavior.translucent,
       onTap: () {
         FocusScope.of(context).unfocus();
       },
@@ -153,7 +157,9 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
                         IconButton(
                           onPressed: showDatePickerDialog,
                           icon: const Icon(Icons.calendar_month),
-                          color: Colors.black,
+                          color: theme.isLightMode == true
+                              ? Colors.black
+                              : Colors.white,
                         )
                       ],
                     ),
@@ -179,7 +185,9 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
                         IconButton(
                           onPressed: showTimePickerDialog,
                           icon: const Icon(Icons.timelapse),
-                          color: Colors.black,
+                          color: theme.isLightMode == true
+                              ? Colors.black
+                              : Colors.white,
                         )
                       ],
                     )

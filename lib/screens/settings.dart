@@ -138,6 +138,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     firstDayOfTheWeek = ref.watch(firstDayOfTheWeekProvider);
     isNotifications = ref.watch(settingsProvider).isNotifications;
     isLightMode = ref.watch(settingsProvider).isLightMode;
+    final theme = ref.watch(settingsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -158,7 +159,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 padding: const EdgeInsets.only(top: 15, left: 12, bottom: 8),
                 child: Row(
                   children: [
-                    const Text('Change Mode'),
+                    Text(
+                      'Change Mode',
+                      style: TextStyle(
+                        color: theme.isLightMode == true
+                            ? Colors.black
+                            : Colors.white,
+                      ),
+                    ),
                     const Spacer(),
                     IconButton(
                         onPressed: () {
@@ -184,7 +192,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 padding: const EdgeInsets.only(left: 20),
                 child: Row(
                   children: [
-                    const Text('Notifications'),
+                    Text(
+                      'Notifications',
+                      style: TextStyle(
+                        color: theme.isLightMode == true
+                            ? Colors.black
+                            : Colors.white,
+                      ),
+                    ),
                     const SizedBox(
                       width: 160,
                     ),
@@ -212,7 +227,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 padding: const EdgeInsets.all(10),
                 child: Row(
                   children: [
-                    Text(language),
+                    Text(
+                      language,
+                      style: TextStyle(
+                        color: theme.isLightMode == true
+                            ? Colors.black
+                            : Colors.white,
+                      ),
+                    ),
                     const Spacer(),
                     DropdownButtonHideUnderline(
                         child: DropdownButton(
@@ -244,9 +266,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       borderRadius: BorderRadius.circular(10)),
                   width: 400,
                   height: 60,
-                  child: const Padding(
-                    padding: EdgeInsets.all(18.0),
-                    child: Text('Check for Updates'),
+                  child: Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Text(
+                      'Check for Updates',
+                      style: TextStyle(
+                        color: theme.isLightMode == true
+                            ? Colors.black
+                            : Colors.white,
+                      ),
+                    ),
                   )),
             ),
             const SizedBox(
@@ -264,9 +293,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       borderRadius: BorderRadius.circular(10)),
                   width: 400,
                   height: 60,
-                  child: const Padding(
-                    padding: EdgeInsets.all(18.0),
-                    child: Text('Remove  Ads'),
+                  child: Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Text(
+                      'Remove  Ads',
+                      style: TextStyle(
+                        color: theme.isLightMode == true
+                            ? Colors.black
+                            : Colors.white,
+                      ),
+                    ),
                   )),
             ),
             const SizedBox(
@@ -287,7 +323,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Time Format'),
+                      Text(
+                        'Time Format',
+                        style: TextStyle(
+                          color: theme.isLightMode == true
+                              ? Colors.black
+                              : Colors.white,
+                        ),
+                      ),
                       Text(selectedTimeValue)
                     ],
                   ),
