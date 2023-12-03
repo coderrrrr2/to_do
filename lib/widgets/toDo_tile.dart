@@ -1,7 +1,4 @@
 // ignore_for_file: file_names
-
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -106,7 +103,7 @@ class _ToDoTileState extends ConsumerState<ToDoTile>
                       if (await returnTodoStatus() == true) {
                         _controller.forward();
                         ref
-                            .read(listManipulatorProvider.notifier)
+                            .watch(listManipulatorProvider.notifier)
                             .remove(widget.todo);
                       }
 
