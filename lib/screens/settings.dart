@@ -204,7 +204,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       width: 160,
                     ),
                     Expanded(
-                        child: SwitchListTile(
+                        child: Switch.adaptive(
                             value: isNotifications,
                             onChanged: (value) {
                               changeListTile(value);

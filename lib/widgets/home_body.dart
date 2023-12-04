@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/models/to_do.dart';
@@ -22,27 +25,49 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
   }
 
   Future<bool> returnTodoStatus() async {
-    return await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Finish task '),
-        content: const Text('Are you sure?'),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context, false);
-            },
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-            child: const Text('Finish'),
-          ),
-        ],
-      ),
-    );
+    return await (Platform.isIOS
+        ? showCupertinoDialog<bool>(
+            context: context,
+            builder: (context) => CupertinoAlertDialog(
+              title: const Text('Finish task '),
+              content: const Text('Are you sure?'),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, false);
+                  },
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: const Text('Finish'),
+                ),
+              ],
+            ),
+          )
+        : showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Finish task '),
+              content: const Text('Are you sure?'),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, false);
+                  },
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: const Text('Finish'),
+                ),
+              ],
+            ),
+          ));
   }
 
   @override

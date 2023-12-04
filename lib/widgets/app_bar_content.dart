@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/models/to_do.dart';
@@ -71,7 +69,6 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
     );
 
     TextEditingController searchBarTextField = TextEditingController(text: '');
-    log(isSearching.toString());
     return isSearching
         ? appBarContent = Row(
             children: [

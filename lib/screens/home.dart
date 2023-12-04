@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/providers/isSearchingProvider.dart';
@@ -45,10 +43,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     },
                     icon: const Icon(Icons.arrow_back_sharp))
                 : IconButton(
-                    onPressed: () {
-                      log(isSearching.toString());
-                      log("sssss");
-                    },
+                    onPressed: () {},
                     icon: const Icon(
                       Icons.calendar_month,
                       size: 35,

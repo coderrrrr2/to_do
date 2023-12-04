@@ -1,4 +1,8 @@
 // ignore_for_file: file_names
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -32,27 +36,50 @@ class _ToDoTileState extends ConsumerState<ToDoTile>
   }
 
   Future<bool> returnTodoStatus() async {
-    return await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Finish task '),
-        content: const Text('Are you sure?'),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context, false);
-            },
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-            child: const Text('Finish'),
-          ),
-        ],
-      ),
-    );
+    log(widget.todo.toString());
+    return await (Platform.isIOS
+        ? showCupertinoDialog<bool>(
+            context: context,
+            builder: (context) => CupertinoAlertDialog(
+              title: const Text('Finish task '),
+              content: const Text('Are you sure?'),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, false);
+                  },
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: const Text('Finish'),
+                ),
+              ],
+            ),
+          )
+        : showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Finish task '),
+              content: const Text('Are you sure?'),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, false);
+                  },
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: const Text('Finish'),
+                ),
+              ],
+            ),
+          ));
   }
 
   late AnimationController _controller;
@@ -79,8 +106,15 @@ class _ToDoTileState extends ConsumerState<ToDoTile>
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = ref.watch(settingsProvider);
+    log(widget.todo.toString());
 
     return Container(
       margin: const EdgeInsets.all(10),
