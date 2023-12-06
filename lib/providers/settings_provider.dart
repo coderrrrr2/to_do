@@ -1,7 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/models/settings.dart';
 
-bool isNotifications = true;
+bool isNotifications = false;
 bool isLightMode = true;
 String chosenLanguage = 'English';
 String timeFormat = '12-hour';
@@ -17,6 +19,7 @@ class SettingsProvider extends StateNotifier<Settings> {
         );
 
   void changeLanguage(String language) {
+    chosenLanguage = language;
     state = Settings(
         isNotifications: isNotifications,
         isLightMode: isLightMode,
@@ -25,6 +28,7 @@ class SettingsProvider extends StateNotifier<Settings> {
   }
 
   void changeLightMode(bool item) {
+    isLightMode = item;
     state = Settings(
         isNotifications: isNotifications,
         isLightMode: item,
@@ -33,6 +37,8 @@ class SettingsProvider extends StateNotifier<Settings> {
   }
 
   void changeNotifications(bool item) {
+    log(isLightMode.toString());
+    isNotifications = item;
     state = Settings(
         isNotifications: item,
         isLightMode: isLightMode,
@@ -41,6 +47,7 @@ class SettingsProvider extends StateNotifier<Settings> {
   }
 
   void changeTimeFormat(String item) {
+    timeFormat = item;
     state = Settings(
         isNotifications: isNotifications,
         isLightMode: isLightMode,

@@ -205,6 +205,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                     Expanded(
                         child: Switch.adaptive(
+                            activeColor: Theme.of(context).colorScheme.primary,
                             value: isNotifications,
                             onChanged: (value) {
                               changeListTile(value);
@@ -238,6 +239,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     const Spacer(),
                     DropdownButtonHideUnderline(
                         child: DropdownButton(
+                            dropdownColor: theme.isLightMode == true
+                                ? Colors.white
+                                : Colors.black,
                             items: languages
                                 .map((item) => DropdownMenuItem<String>(
                                     value: item, child: Text(item)))
@@ -331,7 +335,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               : Colors.white,
                         ),
                       ),
-                      Text(selectedTimeValue)
+                      Text(
+                        selectedTimeValue,
+                        style: TextStyle(
+                          color: theme.isLightMode == true
+                              ? Colors.black
+                              : Colors.white,
+                        ),
+                      )
                     ],
                   ),
                 ),
