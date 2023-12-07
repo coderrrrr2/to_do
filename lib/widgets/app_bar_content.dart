@@ -5,6 +5,7 @@ import 'package:to_do_app/providers/isSearchingProvider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/providers/toDo_provider.dart';
 import 'package:to_do_app/screens/settings.dart';
+import 'package:to_do_app/widgets/home_body.dart';
 
 enum MenuAction { settings, about, rate }
 
@@ -24,6 +25,26 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
 
   void updateSearchingValue(bool value) {
     ref.watch(searchingProvider.notifier).setSearching(value);
+  }
+
+  Future<void> _showAlertDialog(BuildContext context) async {
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Tasks'),
+          content: const Text('No task matches your text'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -89,7 +110,14 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
                               return;
                             }
 
-                            searchTaskName(searchBarTextField.text, listOfToDo);
+                            List<ToDo>? searchedToDo = searchTaskName(
+                                searchBarTextField.text, listOfToDo);
+                            HomeBody(
+                              searchedToDo: searchedToDo,
+                            );
+                            if (searchedToDo!.isEmpty) {
+                              _showAlertDialog(context);
+                            }
                           },
                           icon: const Icon(Icons.search)),
                       SizedBox(

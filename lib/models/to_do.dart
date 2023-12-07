@@ -11,11 +11,13 @@ class ToDo {
   final DateTime date;
   final TimeOfDay time;
   late String taskDayClassification;
+  final String repeatTaskDays;
 
   ToDo({
     required this.taskName,
     required this.date,
     required this.time,
+    required this.repeatTaskDays,
     String? id,
   }) : id = id ?? const Uuid().v4() {
     taskDayClassification = _setTaskDayClassification(date);

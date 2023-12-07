@@ -15,12 +15,25 @@ class TasksScreen extends ConsumerStatefulWidget {
 }
 
 class _TasksScreenState extends ConsumerState<TasksScreen> {
+  List<String> repeatDaysChoices = [
+    "No",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+    "Everyday"
+  ];
   final formKey = GlobalKey<FormState>();
   final taskController = TextEditingController();
   DateTime? enteredDate;
   bool textformKeyIsEmpty = true;
   bool isDateSelected = false;
   TimeOfDay? selectedTime;
+  String repeatDays = "No";
+  Color darkHeaderColour = const Color.fromARGB(255, 156, 81, 231);
 
   void showDatePickerDialog() async {
     final now = DateTime.now();
@@ -60,8 +73,8 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
 
   @override
   void initState() {
-    taskController.addListener(updateEmpty);
     super.initState();
+    taskController.addListener(updateEmpty);
   }
 
   String formatTime(TimeOfDay timeOfDay) {
@@ -83,7 +96,6 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     final theme = ref.watch(settingsProvider);
 
     return GestureDetector(
-      behavior: HitTestBehavior.translucent,
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
           resizeToAvoidBottomInset: false,
@@ -97,21 +109,35 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                 key: formKey,
                 child: Column(
                   children: [
+                    Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(left: 15, top: 30),
+                          child: Text(
+                            "What is to be done",
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: theme.isLightMode
+                                    ? Theme.of(context).colorScheme.primary
+                                    : darkHeaderColour),
+                          ),
+                        ),
+                      ],
+                    ),
                     Container(
+                      height: 30,
                       margin: const EdgeInsets.all(15),
                       child: TextFormField(
                         style: TextStyle(
-                          color: theme.isLightMode == true
-                              ? Colors.black
-                              : Colors.white,
+                          color:
+                              theme.isLightMode ? Colors.black : Colors.white,
                         ),
                         controller: taskController,
                         decoration: InputDecoration(
-                          labelText: "What is meant to be done",
                           labelStyle: TextStyle(
-                            color: theme.isLightMode == true
-                                ? Colors.black
-                                : Colors.white,
+                            color:
+                                theme.isLightMode ? Colors.black : Colors.white,
                           ),
                         ),
                         keyboardType: TextInputType.text,
@@ -119,6 +145,22 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                     ),
                     const SizedBox(
                       height: 30,
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(left: 15),
+                          child: Text(
+                            "Due Date",
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: theme.isLightMode
+                                    ? Theme.of(context).colorScheme.primary
+                                    : darkHeaderColour),
+                          ),
+                        ),
+                      ],
                     ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -131,7 +173,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                                 ? "Date Not Set"
                                 : formatter.format(enteredDate!),
                             style: TextStyle(
-                              color: theme.isLightMode == true
+                              color: theme.isLightMode
                                   ? Colors.black
                                   : Colors.white,
                             ),
@@ -141,14 +183,29 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                         IconButton(
                           onPressed: showDatePickerDialog,
                           icon: const Icon(Icons.calendar_month),
-                          color: theme.isLightMode == true
-                              ? Colors.black
-                              : Colors.white,
+                          color:
+                              theme.isLightMode ? Colors.black : Colors.white,
                         )
                       ],
                     ),
                     const SizedBox(
                       height: 20,
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(left: 15),
+                          child: Text(
+                            "Due Time",
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: theme.isLightMode
+                                    ? Theme.of(context).colorScheme.primary
+                                    : darkHeaderColour),
+                          ),
+                        ),
+                      ],
                     ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -158,10 +215,10 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                           width: 300,
                           child: Text(
                             selectedTime == null
-                                ? 'Time not set(all day)'
+                                ? "Time not set"
                                 : formatTime(selectedTime!),
                             style: TextStyle(
-                              color: theme.isLightMode == true
+                              color: theme.isLightMode
                                   ? Colors.black
                                   : Colors.white,
                             ),
@@ -171,15 +228,65 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                         IconButton(
                           onPressed: showTimePickerDialog,
                           icon: const Icon(Icons.timelapse),
-                          color: theme.isLightMode == true
-                              ? Colors.black
-                              : Colors.white,
+                          color:
+                              theme.isLightMode ? Colors.black : Colors.white,
                         )
                       ],
                     )
                   ],
                 ),
               ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(left: 15),
+                    child: Text(
+                      "Repeat",
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: theme.isLightMode
+                              ? Theme.of(context).colorScheme.primary
+                              : darkHeaderColour),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                      width: 200,
+                      margin: const EdgeInsets.all(15),
+                      child: Text(
+                        repeatDays,
+                        style: TextStyle(
+                          color:
+                              theme.isLightMode ? Colors.black : Colors.white,
+                        ),
+                      )),
+                  const Spacer(),
+                  DropdownButtonHideUnderline(
+                      child: DropdownButton(
+                          dropdownColor:
+                              theme.isLightMode ? Colors.white : Colors.black,
+                          items: repeatDaysChoices
+                              .map((item) => DropdownMenuItem<String>(
+                                  value: item, child: Text(item)))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              repeatDays = value!;
+                            });
+                          })),
+                  const SizedBox(
+                    width: 15,
+                  )
+                ],
+              )
             ],
           ),
           floatingActionButton: !textformKeyIsEmpty
@@ -189,7 +296,8 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                       submitformKey(ToDo(
                           taskName: taskController.text,
                           date: enteredDate!,
-                          time: selectedTime!));
+                          time: selectedTime!,
+                          repeatTaskDays: repeatDays));
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

@@ -18,7 +18,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool isSearching = false;
   bool isEdited = false;
   bool isChecked = false;
-  Widget body = const HomeBody();
+  Widget body = HomeBody();
   Widget appBarContent = const AppBarContent();
 
   void updateSearchingValue(bool value) {

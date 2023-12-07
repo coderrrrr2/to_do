@@ -1,4 +1,4 @@
-import 'dart:developer';
+// ignore_for_file: file_names
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -20,13 +20,24 @@ class ToDoDetails extends ConsumerStatefulWidget {
 class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
   late String formattedTime;
   TextEditingController? taskController;
-
+  List<String> repeatDaysChoices = [
+    "No",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+    "Everyday"
+  ];
+  Color darkHeaderColour = const Color.fromARGB(255, 156, 81, 231);
   final formKey = GlobalKey<FormState>();
 
   DateTime? enteredDate;
 
   bool textformKeyIsEmpty = true;
-
+  late String repeatDays;
   bool isDateSelected = false;
 
   TimeOfDay? selectedTime;
@@ -67,13 +78,13 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
 
   @override
   void initState() {
+    super.initState();
     taskController = TextEditingController(text: widget.todo.taskName);
     taskController!.addListener(updateIfEmpty);
     selectedTime = widget.todo.time;
     formattedTime = formatTime(widget.todo.time);
     enteredDate = widget.todo.date;
-    log(" $enteredDate is the entered date");
-    super.initState();
+    repeatDays = widget.todo.repeatTaskDays;
   }
 
   void updateIfEmpty() {
@@ -86,7 +97,6 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
     final hour = timeOfDay.hourOfPeriod;
     final minute = timeOfDay.minute.toString().padLeft(2, '0');
     final period = timeOfDay.period == DayPeriod.am ? 'AM' : 'PM';
-
     return '$hour:$minute $period';
   }
 
@@ -116,7 +126,24 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
                 key: formKey,
                 child: Column(
                   children: [
+                    Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(left: 15, top: 30),
+                          child: Text(
+                            "What is to be done",
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: theme.isLightMode
+                                    ? Theme.of(context).colorScheme.primary
+                                    : darkHeaderColour),
+                          ),
+                        ),
+                      ],
+                    ),
                     Container(
+                      height: 30,
                       margin: const EdgeInsets.all(15),
                       child: TextFormField(
                         style: TextStyle(
@@ -126,7 +153,6 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
                         ),
                         controller: taskController,
                         decoration: InputDecoration(
-                          labelText: "What is meant to be done",
                           labelStyle: TextStyle(
                               color: Theme.of(context)
                                   .textTheme
@@ -138,6 +164,22 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
                     ),
                     const SizedBox(
                       height: 30,
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(left: 15),
+                          child: Text(
+                            "Due Date",
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: theme.isLightMode
+                                    ? Theme.of(context).colorScheme.primary
+                                    : darkHeaderColour),
+                          ),
+                        ),
+                      ],
                     ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -168,6 +210,22 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
                       height: 20,
                     ),
                     Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(left: 15),
+                          child: Text(
+                            "Due Time",
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: theme.isLightMode
+                                    ? Theme.of(context).colorScheme.primary
+                                    : darkHeaderColour),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Container(
@@ -191,6 +249,56 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
                               : Colors.white,
                         )
                       ],
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(left: 15),
+                          child: Text(
+                            "Repeat",
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: theme.isLightMode
+                                    ? Theme.of(context).colorScheme.primary
+                                    : darkHeaderColour),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Container(
+                            width: 200,
+                            margin: const EdgeInsets.all(15),
+                            child: Text(
+                              repeatDays,
+                              style: TextStyle(
+                                color: theme.isLightMode
+                                    ? Colors.black
+                                    : Colors.white,
+                              ),
+                            )),
+                        const Spacer(),
+                        DropdownButtonHideUnderline(
+                            child: DropdownButton(
+                                dropdownColor: theme.isLightMode
+                                    ? Colors.white
+                                    : Colors.black,
+                                items: repeatDaysChoices
+                                    .map((item) => DropdownMenuItem<String>(
+                                        value: item, child: Text(item)))
+                                    .toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    repeatDays = value!;
+                                  });
+                                })),
+                        const SizedBox(
+                          width: 15,
+                        )
+                      ],
                     )
                   ],
                 ),
@@ -205,7 +313,8 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
                       submitForm(ToDo(
                           taskName: taskController!.text,
                           date: enteredDate!,
-                          time: selectedTime!));
+                          time: selectedTime!,
+                          repeatTaskDays: repeatDays));
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
