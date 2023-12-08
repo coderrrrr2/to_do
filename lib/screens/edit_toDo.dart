@@ -9,9 +9,10 @@ import 'package:to_do_app/providers/toDo_provider.dart';
 final formatter = DateFormat.yMd();
 
 class ToDoDetails extends ConsumerStatefulWidget {
-  const ToDoDetails({super.key, required this.todo});
+  const ToDoDetails({super.key, required this.todo, required this.index});
 
   final ToDo todo;
+  final int index;
 
   @override
   ConsumerState<ToDoDetails> createState() => _ToDoDetailsState();
@@ -33,14 +34,28 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
   ];
   Color darkHeaderColour = const Color.fromARGB(255, 156, 81, 231);
   final formKey = GlobalKey<FormState>();
-
   DateTime? enteredDate;
-
   bool textformKeyIsEmpty = true;
   late String repeatDays;
   bool isDateSelected = false;
-
   TimeOfDay? selectedTime;
+
+  @override
+  void initState() {
+    super.initState();
+    taskController = TextEditingController(text: widget.todo.taskName);
+    taskController!.addListener(updateIfEmpty);
+    selectedTime = widget.todo.time;
+    formattedTime = formatTime(widget.todo.time);
+    enteredDate = widget.todo.date;
+    repeatDays = widget.todo.repeatTaskDays;
+  }
+
+  @override
+  void dispose() {
+    taskController!.dispose();
+    super.dispose();
+  }
 
   void showDatePickerDialog() async {
     final now = DateTime.now();
@@ -52,9 +67,11 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
         initialDate: now,
         firstDate: firstDate,
         lastDate: lastDate);
-    setState(() {
-      enteredDate = pickedDate;
-    });
+    setState(
+      () {
+        enteredDate = pickedDate;
+      },
+    );
   }
 
   void showTimePickerDialog() async {
@@ -62,29 +79,20 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
       initialTime: TimeOfDay.now(),
       context: context,
     );
-    setState(() {
-      selectedTime = pickedTime;
-    });
+    setState(
+      () {
+        selectedTime = pickedTime;
+      },
+    );
     formattedTime = formatTime(selectedTime!);
   }
 
   void submitForm(ToDo todo) {
     final newToDo = todo;
     ref.read(listManipulatorProvider.notifier).remove(widget.todo);
-    ref.read(listManipulatorProvider.notifier).add(newToDo);
+    ref.read(listManipulatorProvider.notifier).editToDo(newToDo, widget.index);
 
     Navigator.of(context).pop();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    taskController = TextEditingController(text: widget.todo.taskName);
-    taskController!.addListener(updateIfEmpty);
-    selectedTime = widget.todo.time;
-    formattedTime = formatTime(widget.todo.time);
-    enteredDate = widget.todo.date;
-    repeatDays = widget.todo.repeatTaskDays;
   }
 
   void updateIfEmpty() {
@@ -98,12 +106,6 @@ class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
     final minute = timeOfDay.minute.toString().padLeft(2, '0');
     final period = timeOfDay.period == DayPeriod.am ? 'AM' : 'PM';
     return '$hour:$minute $period';
-  }
-
-  @override
-  void dispose() {
-    taskController!.dispose();
-    super.dispose();
   }
 
   @override

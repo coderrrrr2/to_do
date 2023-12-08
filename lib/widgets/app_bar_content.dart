@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/models/to_do.dart';
@@ -28,23 +31,39 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
   }
 
   Future<void> _showAlertDialog(BuildContext context) async {
-    showDialog<String>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Tasks'),
-          content: const Text('No task matches your text'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Ok'),
+    (Platform.isIOS
+        ? showCupertinoDialog<bool>(
+            context: context,
+            builder: (context) => CupertinoAlertDialog(
+              title: const Text('Tasks'),
+              content: const Text('No task matches your search'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Ok'),
+                ),
+              ],
             ),
-          ],
-        );
-      },
-    );
+          )
+        : showDialog<String>(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Tasks'),
+                content: const Text('No task matches your search'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Ok'),
+                  ),
+                ],
+              );
+            },
+          ));
   }
 
   @override

@@ -11,6 +11,16 @@ import 'package:to_do_app/providers/toDo_provider.dart';
 
 final formatter = DateFormat.yMd();
 
+Map<int, String> weekdayMap = {
+  1: 'Mon',
+  2: 'Tue',
+  3: 'Wed',
+  4: 'Thur',
+  5: 'Fri',
+  6: 'Sat',
+  7: 'Sun',
+};
+
 class ToDoTile extends ConsumerStatefulWidget {
   const ToDoTile({
     super.key,
@@ -156,15 +166,25 @@ class _ToDoTileState extends ConsumerState<ToDoTile>
                             : Colors.white,
                       ),
                     ),
-                    Text(
-                        formatTime(
-                          widget.todo.time,
-                        ),
-                        style: TextStyle(
-                          color: theme.isLightMode == true
-                              ? Colors.black
-                              : Colors.white,
-                        ))
+                    Row(
+                      children: [
+                        Text("${weekdayMap[widget.todo.date.weekday]},",
+                            style: TextStyle(
+                              color: theme.isLightMode == true
+                                  ? Colors.black
+                                  : Colors.white,
+                            )),
+                        Text(
+                            formatTime(
+                              widget.todo.time,
+                            ),
+                            style: TextStyle(
+                              color: theme.isLightMode == true
+                                  ? Colors.black
+                                  : Colors.white,
+                            )),
+                      ],
+                    )
                   ],
                 )
               ],

@@ -61,30 +61,6 @@ final dummyData = [
     time: TimeOfDay.now(),
     repeatTaskDays: 'Tuesday',
   ),
-  ToDo(
-    taskName: 'Task 7',
-    date: DateTime.now().add(Duration(days: 6)),
-    time: TimeOfDay.now(),
-    repeatTaskDays: 'Saturday',
-  ),
-  ToDo(
-    taskName: 'Task 8',
-    date: DateTime.now().add(Duration(days: 7)),
-    time: TimeOfDay.now(),
-    repeatTaskDays: 'Monday',
-  ),
-  ToDo(
-    taskName: 'Task 9',
-    date: DateTime.now().add(Duration(days: 8)),
-    time: TimeOfDay.now(),
-    repeatTaskDays: 'Friday',
-  ),
-  ToDo(
-    taskName: 'Task 10',
-    date: DateTime.now().add(Duration(days: 9)),
-    time: TimeOfDay.now(),
-    repeatTaskDays: 'Wednesday',
-  ),
 ];
 
 class ListManipulator extends StateNotifier<List<ToDo>> {
@@ -96,6 +72,10 @@ class ListManipulator extends StateNotifier<List<ToDo>> {
 
   void remove(ToDo todo) {
     state = state.where((element) => element != todo).toList();
+  }
+
+  void editToDo(ToDo todo, int index) {
+    state.insert(index, todo);
   }
 }
 

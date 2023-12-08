@@ -103,7 +103,10 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
             padding: const EdgeInsets.only(top: 8, left: 4, right: 4),
             child: GestureDetector(
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ToDoDetails(todo: listOfToDo[index]),
+                builder: (context) => ToDoDetails(
+                  todo: listOfToDo[index],
+                  index: index,
+                ),
               )),
               child: Dismissible(
                 key: Key(listOfToDo[index].id),
@@ -134,8 +137,10 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
             padding: const EdgeInsets.only(top: 8, left: 4, right: 4),
             child: GestureDetector(
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>
-                    ToDoDetails(todo: widget.searchedToDo![index]),
+                builder: (context) => ToDoDetails(
+                  todo: widget.searchedToDo![index],
+                  index: index,
+                ),
               )),
               child: Dismissible(
                 key: Key(widget.searchedToDo![index].id),
