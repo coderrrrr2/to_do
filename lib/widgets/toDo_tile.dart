@@ -127,7 +127,7 @@ class _ToDoTileState extends ConsumerState<ToDoTile>
 
     return Container(
       margin: const EdgeInsets.all(10),
-      width: 200,
+      width: 380,
       decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(15)),

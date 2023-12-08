@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/isSearchingProvider.dart';
+import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/providers/toDo_provider.dart';
 import 'package:to_do_app/screens/edit_toDo.dart';
 import 'package:to_do_app/widgets/toDo_tile.dart';
@@ -19,6 +20,14 @@ class HomeBody extends ConsumerStatefulWidget {
 }
 
 class _HomeBodyState extends ConsumerState<HomeBody> {
+  Color darkHeaderColour = const Color.fromARGB(255, 156, 81, 231);
+
+  List<String> headerName = [
+    "Due this week",
+    "Due next week",
+    "Due next month",
+    "Due later"
+  ];
   void removeToDo(ToDo todo) {
     ref.read(listManipulatorProvider.notifier).remove(todo);
   }
@@ -75,8 +84,11 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> bodys = [];
+
     final listOfToDo = ref.watch(listManipulatorProvider);
     final isSearching = ref.watch(searchingProvider);
+    final theme = ref.watch(settingsProvider);
 
     Widget body = Padding(
       padding: const EdgeInsets.only(
@@ -96,38 +108,60 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
     );
 
     if (listOfToDo.isNotEmpty) {
-      body = ListView.builder(
-        itemCount: listOfToDo.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.only(top: 8, left: 4, right: 4),
-            child: GestureDetector(
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ToDoDetails(
-                  todo: listOfToDo[index],
-                  index: index,
-                ),
-              )),
-              child: Dismissible(
-                key: Key(listOfToDo[index].id),
-                onDismissed: (direction) async {
-                  removeToDo(listOfToDo[index]);
-                },
-                direction: DismissDirection.horizontal,
-                movementDuration: const Duration(milliseconds: 900),
-                confirmDismiss: (direction) async => await returnTodoStatus(),
-                dismissThresholds: const {
-                  DismissDirection.startToEnd: 0.6,
-                  DismissDirection.endToStart: 0.6,
-                },
-                child: ToDoTile(
-                  todo: listOfToDo[index],
-                ),
-              ),
-            ),
-          );
-        },
-      );
+      for (int i = 0; i < headerName.length; i++) {
+        String header = headerName[i];
+        final editedList = listOfToDo
+            .where((element) => element.taskDayClassification == header)
+            .toList();
+        if (editedList.isNotEmpty) {
+          // Create a list of
+          List<Widget> todoWidgets = editedList
+              .map((todo) => Container(
+                    margin: const EdgeInsets.only(
+                      left: 15,
+                    ),
+                    child: Dismissible(
+                      key: Key(todo.id),
+                      onDismissed: (direction) async {
+                        removeToDo(todo);
+                      },
+                      direction: DismissDirection.horizontal,
+                      movementDuration: const Duration(milliseconds: 900),
+                      confirmDismiss: (direction) async =>
+                          await returnTodoStatus(),
+                      dismissThresholds: const {
+                        DismissDirection.startToEnd: 0.6,
+                        DismissDirection.endToStart: 0.6,
+                      },
+                      child: ToDoTile(
+                        todo: todo,
+                      ),
+                    ),
+                  ))
+              .toList();
+
+          // Add the header and the list of to-do item widgets to the body
+          bodys.add(Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                  margin: const EdgeInsets.only(left: 25, top: 10),
+                  child: Text(header,
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: theme.isLightMode
+                              ? Theme.of(context).colorScheme.primary
+                              : darkHeaderColour))),
+              ...todoWidgets, // Use the spread operator to add the list of to-do item widgets
+            ],
+          ));
+        }
+        body = ListView.builder(
+          itemCount: bodys.length,
+          itemBuilder: (context, index) => bodys[index],
+        );
+      }
     }
     if (isSearching && widget.searchedToDo!.isNotEmpty) {
       body = ListView.builder(

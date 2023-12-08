@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -24,11 +22,20 @@ class ToDo {
   }
 
   String _setTaskDayClassification(DateTime date) {
-    if (DateTime.now() == date) {
-      log(DateTime.now().toString());
-      log(date.toString());
-      return 'Today';
+    DateTime currentDate = DateTime.now();
+
+    if (currentDate.year == date.year &&
+        currentDate.month == date.month &&
+        currentDate.day <= date.day &&
+        date.day <= currentDate.day + 6) {
+      return "Due this week";
+    } else if (currentDate.year == date.year &&
+        currentDate.month == date.month + 1) {
+      return "Due next month";
+    } else if (date.isAfter(currentDate.add(const Duration(days: 6)))) {
+      return "Due later";
     }
-    return 'some classification';
+
+    return "Due next week";
   }
 }

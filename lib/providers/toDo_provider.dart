@@ -64,7 +64,7 @@ final dummyData = [
 ];
 
 class ListManipulator extends StateNotifier<List<ToDo>> {
-  ListManipulator() : super(dummyData);
+  ListManipulator() : super([]);
 
   void add(ToDo todo) {
     state = [...state, todo];
