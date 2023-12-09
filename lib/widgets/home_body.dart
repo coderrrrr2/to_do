@@ -23,10 +23,11 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
   Color darkHeaderColour = const Color.fromARGB(255, 156, 81, 231);
 
   List<String> headerName = [
-    "Due this week",
-    "Due next week",
-    "Due next month",
-    "Due later"
+    "Due This Week",
+    "Due Next Week",
+    "Due Next Month",
+    "Due Later This Month",
+    "Due Later"
   ];
   void removeToDo(ToDo todo) {
     ref.read(listManipulatorProvider.notifier).remove(todo);

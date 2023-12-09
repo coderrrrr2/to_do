@@ -23,19 +23,25 @@ class ToDo {
 
   String _setTaskDayClassification(DateTime date) {
     DateTime currentDate = DateTime.now();
-
     if (currentDate.year == date.year &&
         currentDate.month == date.month &&
         currentDate.day <= date.day &&
         date.day <= currentDate.day + 6) {
-      return "Due this week";
+      return "Due This Week";
     } else if (currentDate.year == date.year &&
-        currentDate.month == date.month + 1) {
-      return "Due next month";
-    } else if (date.isAfter(currentDate.add(const Duration(days: 6)))) {
-      return "Due later";
+        currentDate.month == date.month &&
+        date.day > currentDate.day + 6 &&
+        date.day <= currentDate.day + 13) {
+      return "Due Next Week";
+    } else if (currentDate.year == date.year &&
+        currentDate.month == date.month &&
+        date.day > currentDate.day + 13) {
+      return "Due Later This Month";
+    } else if (currentDate.month == 12 && date.month == 1) {
+      return "Due Next Month";
+    } else if (currentDate.month + 1 == date.month) {
+      return "Due Next Month";
     }
-
-    return "Due next week";
+    return "Due Later";
   }
 }
