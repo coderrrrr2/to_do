@@ -4,6 +4,8 @@ final lightcolorScheme = ColorScheme.fromSeed(
     seedColor: const Color.fromARGB(255, 81, 26, 136),
     onBackground: Colors.white);
 
+Color darkHeaderColour = const Color.fromARGB(255, 156, 81, 231);
+
 final darkcolorScheme = ColorScheme.fromSeed(
     seedColor: const Color.fromARGB(255, 40, 13, 66),
     onBackground: const Color.fromARGB(107, 18, 17, 17),

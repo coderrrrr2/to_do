@@ -31,10 +31,10 @@ class ToDoTile extends ConsumerStatefulWidget {
   ConsumerState<ToDoTile> createState() => _ToDoTileState();
 }
 
-bool isChecked = false;
-
 class _ToDoTileState extends ConsumerState<ToDoTile>
     with SingleTickerProviderStateMixin {
+  bool isChecked = false;
+
   String formatTime(TimeOfDay timeOfDay) {
     final hour = timeOfDay.hourOfPeriod;
     final minute = timeOfDay.minute.toString().padLeft(2, '0');

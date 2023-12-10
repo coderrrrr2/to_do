@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:to_do_app/color_scheme.dart';
 import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/isSearchingProvider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
@@ -20,8 +21,6 @@ class HomeBody extends ConsumerStatefulWidget {
 }
 
 class _HomeBodyState extends ConsumerState<HomeBody> {
-  Color darkHeaderColour = const Color.fromARGB(255, 156, 81, 231);
-
   List<String> headerName = [
     "Due This Week",
     "Due Next Week",
@@ -86,11 +85,10 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
   @override
   Widget build(BuildContext context) {
     List<Widget> bodys = [];
-
+    int? currentIndex;
     final listOfToDo = ref.watch(listManipulatorProvider);
     final isSearching = ref.watch(searchingProvider);
     final theme = ref.watch(settingsProvider);
-    ToDo? currentToDo;
 
     Widget body = Padding(
       padding: const EdgeInsets.only(
@@ -112,67 +110,66 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
     if (listOfToDo.isNotEmpty) {
       for (int i = 0; i < headerName.length; i++) {
         String header = headerName[i];
+
         final editedList = listOfToDo
             .where((element) => element.taskDayClassification == header)
             .toList();
-
-        body = ListView.builder(
-          itemCount: bodys.length,
-          itemBuilder: (context, index) {
-            if (editedList.isNotEmpty) {
-              // Create a list of
-              List<Widget> todoWidgets = editedList.map((todo) {
-                currentToDo = todo;
-                return GestureDetector(
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        EditToDo(todo: currentToDo!, index: index),
-                  )),
-                  child: Container(
-                    margin: const EdgeInsets.only(
-                      left: 15,
-                    ),
-                    child: Dismissible(
-                      key: Key(todo.id),
-                      onDismissed: (direction) async {
-                        removeToDo(todo);
-                      },
-                      direction: DismissDirection.horizontal,
-                      movementDuration: const Duration(milliseconds: 900),
-                      confirmDismiss: (direction) async =>
-                          await returnTodoStatus(),
-                      dismissThresholds: const {
-                        DismissDirection.startToEnd: 0.6,
-                        DismissDirection.endToStart: 0.6,
-                      },
-                      child: ToDoTile(
-                        todo: todo,
-                      ),
-                    ),
+        if (editedList.isNotEmpty) {
+          // Create a list of
+          List<Widget> todoWidgets = editedList.map((todo) {
+            return GestureDetector(
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) =>
+                    EditToDo(todo: todo, index: currentIndex!),
+              )),
+              child: Container(
+                margin: const EdgeInsets.only(
+                  left: 15,
+                ),
+                child: Dismissible(
+                  key: Key(todo.id),
+                  onDismissed: (direction) async {
+                    removeToDo(todo);
+                  },
+                  direction: DismissDirection.horizontal,
+                  movementDuration: const Duration(milliseconds: 900),
+                  confirmDismiss: (direction) async => await returnTodoStatus(),
+                  dismissThresholds: const {
+                    DismissDirection.startToEnd: 0.6,
+                    DismissDirection.endToStart: 0.6,
+                  },
+                  child: ToDoTile(
+                    todo: todo,
                   ),
-                );
-              }).toList();
+                ),
+              ),
+            );
+          }).toList();
 
-              // Add the header and the list of to-do item widgets to the body
-              bodys.add(Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                      margin: const EdgeInsets.only(left: 25, top: 10),
-                      child: Text(header,
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: theme.isLightMode
-                                  ? Theme.of(context).colorScheme.primary
-                                  : darkHeaderColour))),
-                  ...todoWidgets, // Use the spread operator to add the list of to-do item widgets
-                ],
-              ));
-            }
-            return bodys[index];
-          },
-        );
+          // Add the header and the list of to-do item widgets to the body
+          bodys.add(Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                  margin: const EdgeInsets.only(left: 25, top: 10),
+                  child: Text(header,
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: theme.isLightMode
+                              ? Theme.of(context).colorScheme.primary
+                              : darkHeaderColour))),
+              ...todoWidgets, // Use the spread operator to add the list of to-do item widgets
+            ],
+          ));
+          body = ListView.builder(
+            itemCount: bodys.length,
+            itemBuilder: (context, index) {
+              currentIndex = index;
+              return bodys[index];
+            },
+          );
+        }
       }
     }
     if (isSearching && widget.searchedToDo!.isNotEmpty) {
