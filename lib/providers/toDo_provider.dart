@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart' as sql;
+import 'package:to_do_app/dummyData.dart';
 import 'package:to_do_app/models/to_do.dart';
 import 'package:path/path.dart' as path;
 import 'package:sqflite/sqlite_api.dart';
@@ -23,45 +23,6 @@ Future<Database> getDataBase() async {
   );
   return database;
 }
-
-final dummyData = [
-  ToDo(
-    taskName: 'Task 1',
-    date: DateTime.now(),
-    time: TimeOfDay.now(),
-    repeatTaskDays: 'Monday',
-  ),
-  ToDo(
-    taskName: 'Task 2',
-    date: DateTime.now().add(Duration(days: 1)),
-    time: TimeOfDay.now(),
-    repeatTaskDays: 'Friday',
-  ),
-  ToDo(
-    taskName: 'Task 3',
-    date: DateTime.now().add(Duration(days: 2)),
-    time: TimeOfDay.now(),
-    repeatTaskDays: 'Wednesday',
-  ),
-  ToDo(
-    taskName: 'Task 4',
-    date: DateTime.now().add(Duration(days: 3)),
-    time: TimeOfDay.now(),
-    repeatTaskDays: 'Thursday',
-  ),
-  ToDo(
-    taskName: 'Task 5',
-    date: DateTime.now().add(Duration(days: 4)),
-    time: TimeOfDay.now(),
-    repeatTaskDays: 'Sunday',
-  ),
-  ToDo(
-    taskName: 'Task 6',
-    date: DateTime.now().add(Duration(days: 5)),
-    time: TimeOfDay.now(),
-    repeatTaskDays: 'Tuesday',
-  ),
-];
 
 class ListManipulator extends StateNotifier<List<ToDo>> {
   ListManipulator() : super([]);

@@ -8,17 +8,17 @@ import 'package:to_do_app/providers/toDo_provider.dart';
 
 final formatter = DateFormat.yMd();
 
-class ToDoDetails extends ConsumerStatefulWidget {
-  const ToDoDetails({super.key, required this.todo, required this.index});
+class EditToDo extends ConsumerStatefulWidget {
+  const EditToDo({super.key, required this.todo, required this.index});
 
   final ToDo todo;
   final int index;
 
   @override
-  ConsumerState<ToDoDetails> createState() => _ToDoDetailsState();
+  ConsumerState<EditToDo> createState() => _EditToDoState();
 }
 
-class _ToDoDetailsState extends ConsumerState<ToDoDetails> {
+class _EditToDoState extends ConsumerState<EditToDo> {
   late String formattedTime;
   TextEditingController? taskController;
   List<String> repeatDaysChoices = [

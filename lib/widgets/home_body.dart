@@ -90,6 +90,7 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
     final listOfToDo = ref.watch(listManipulatorProvider);
     final isSearching = ref.watch(searchingProvider);
     final theme = ref.watch(settingsProvider);
+    ToDo? currentToDo;
 
     Widget body = Padding(
       padding: const EdgeInsets.only(
@@ -114,10 +115,20 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
         final editedList = listOfToDo
             .where((element) => element.taskDayClassification == header)
             .toList();
-        if (editedList.isNotEmpty) {
-          // Create a list of
-          List<Widget> todoWidgets = editedList
-              .map((todo) => Container(
+
+        body = ListView.builder(
+          itemCount: bodys.length,
+          itemBuilder: (context, index) {
+            if (editedList.isNotEmpty) {
+              // Create a list of
+              List<Widget> todoWidgets = editedList.map((todo) {
+                currentToDo = todo;
+                return GestureDetector(
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        EditToDo(todo: currentToDo!, index: index),
+                  )),
+                  child: Container(
                     margin: const EdgeInsets.only(
                       left: 15,
                     ),
@@ -138,29 +149,29 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
                         todo: todo,
                       ),
                     ),
-                  ))
-              .toList();
+                  ),
+                );
+              }).toList();
 
-          // Add the header and the list of to-do item widgets to the body
-          bodys.add(Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                  margin: const EdgeInsets.only(left: 25, top: 10),
-                  child: Text(header,
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: theme.isLightMode
-                              ? Theme.of(context).colorScheme.primary
-                              : darkHeaderColour))),
-              ...todoWidgets, // Use the spread operator to add the list of to-do item widgets
-            ],
-          ));
-        }
-        body = ListView.builder(
-          itemCount: bodys.length,
-          itemBuilder: (context, index) => bodys[index],
+              // Add the header and the list of to-do item widgets to the body
+              bodys.add(Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                      margin: const EdgeInsets.only(left: 25, top: 10),
+                      child: Text(header,
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: theme.isLightMode
+                                  ? Theme.of(context).colorScheme.primary
+                                  : darkHeaderColour))),
+                  ...todoWidgets, // Use the spread operator to add the list of to-do item widgets
+                ],
+              ));
+            }
+            return bodys[index];
+          },
         );
       }
     }
@@ -172,7 +183,7 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
             padding: const EdgeInsets.only(top: 8, left: 4, right: 4),
             child: GestureDetector(
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ToDoDetails(
+                builder: (context) => EditToDo(
                   todo: widget.searchedToDo![index],
                   index: index,
                 ),

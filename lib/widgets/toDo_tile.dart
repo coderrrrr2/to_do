@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
-import 'package:to_do_app/providers/toDo_provider.dart';
 
 final formatter = DateFormat.yMd();
 
@@ -91,33 +90,9 @@ class _ToDoTileState extends ConsumerState<ToDoTile>
           ));
   }
 
-  late AnimationController _controller;
-  late Animation<Offset> _offsetAnimation;
-
   @override
   void initState() {
     super.initState();
-
-    // Initialize the animation controller
-    _controller = AnimationController(
-      duration: const Duration(seconds: 10),
-      vsync: this,
-    );
-
-    // Define the animation
-    _offsetAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(1.0, 0.0),
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   @override
@@ -137,23 +112,14 @@ class _ToDoTileState extends ConsumerState<ToDoTile>
           children: [
             Row(
               children: [
-                SlideTransition(
-                  position: _offsetAnimation,
-                  child: Checkbox(
+                Checkbox(
                     key: Key(widget.todo.id),
                     value: isChecked,
-                    onChanged: (value) async {
-                      if (await returnTodoStatus() == true) {
-                        _controller.forward();
-                        ref
-                            .watch(listManipulatorProvider.notifier)
-                            .remove(widget.todo);
-                      }
-
-                      return;
-                    },
-                  ),
-                ),
+                    onChanged: (value) {
+                      setState(() {
+                        isChecked = value!;
+                      });
+                    }),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
