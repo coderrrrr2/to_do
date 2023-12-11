@@ -23,7 +23,9 @@ class AppBarContent extends ConsumerStatefulWidget {
 }
 
 class _AppBarContentState extends ConsumerState<AppBarContent> {
-  List<ToDo>? returnSearchedTasks(String value, List<ToDo> listOfToDo) {
+  TextEditingController searchBarTextField = TextEditingController(text: '');
+
+  List<ToDo> returnSearchedTasks(String value, List<ToDo> listOfToDo) {
     final listOfTaskNames =
         listOfToDo.where((element) => element.taskName == value).toList();
     return listOfTaskNames;
@@ -112,70 +114,73 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
       ],
     );
 
-    TextEditingController searchBarTextField = TextEditingController(text: '');
     return isSearching
-        ? appBarContent = Row(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      IconButton(
-                          onPressed: () {
-                            if ((searchBarTextField.text == "")) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      duration: Duration(seconds: 1),
-                                      content:
-                                          Text("You must enter some text")));
-                              return;
-                            }
+        ? appBarContent = Consumer(
+            builder: (context, ref, child) => Row(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              if ((searchBarTextField.text == "")) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        duration: Duration(milliseconds: 350),
+                                        content:
+                                            Text("You must enter some text")));
+                                return;
+                              }
 
-                            List<ToDo>? searchedToDo = returnSearchedTasks(
-                                searchBarTextField.text, listOfToDo);
-                            HomeBody(
-                              searchedToDo: searchedToDo,
-                            );
-                            if (searchedToDo!.isEmpty) {
-                              _showAlertDialog(context);
-                              return;
-                            }
-                            ref
-                                .read(buttonPressedProvider.notifier)
-                                .setSearching(!isButtonPressed);
-                          },
-                          icon: const Icon(Icons.search)),
-                      SizedBox(
-                        height: 50,
-                        width: 300,
-                        child: TextField(
-                          controller: searchBarTextField,
-                          style: TextStyle(
-                            color: theme.isLightMode == true
-                                ? Colors.black
-                                : Colors.white,
-                          ),
-                          decoration: InputDecoration(
-                            fillColor: theme.isLightMode == true
-                                ? Colors.black
-                                : Colors.white,
-                            hintText: 'Search...',
-                            border: const OutlineInputBorder(
-                              borderSide: BorderSide.none,
+                              List<ToDo>? searchedToDo = returnSearchedTasks(
+                                  searchBarTextField.text, listOfToDo);
+                              if (searchedToDo.isEmpty) {
+                                _showAlertDialog(context);
+                              } else {
+                                HomeBody(
+                                  searchedToDo: searchedToDo,
+                                );
+                                if (!isButtonPressed) {
+                                  ref
+                                      .read(buttonPressedProvider.notifier)
+                                      .setSearching(!isButtonPressed);
+                                }
+                              }
+                            },
+                            icon: const Icon(Icons.search)),
+                        SizedBox(
+                          height: 50,
+                          width: 300,
+                          child: TextField(
+                            controller: searchBarTextField,
+                            style: TextStyle(
+                              color: theme.isLightMode == true
+                                  ? Colors.black
+                                  : Colors.white,
                             ),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide.none,
+                            decoration: InputDecoration(
+                              fillColor: theme.isLightMode == true
+                                  ? Colors.black
+                                  : Colors.white,
+                              hintText: 'Search...',
+                              border: const OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                              ),
                             ),
                           ),
-                        ),
-                      )
-                    ],
-                  )
-                ],
-              )
-            ],
+                        )
+                      ],
+                    )
+                  ],
+                )
+              ],
+            ),
           )
         : appBarContent;
   }

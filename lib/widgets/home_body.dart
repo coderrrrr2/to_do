@@ -172,7 +172,7 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
         },
       );
     }
-    if (isButtonPressed && widget.searchedToDo.isNotEmpty) {
+    if (isButtonPressed) {
       body = ListView.builder(
         itemCount: widget.searchedToDo.length,
         itemBuilder: (context, index) {

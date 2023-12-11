@@ -3,7 +3,7 @@ import 'package:to_do_app/models/to_do.dart';
 
 final dummyData = [
   ToDo(
-    taskName: 'Task 1',
+    taskName: 's',
     date: DateTime.now(),
     time: TimeOfDay.now(),
     repeatTaskDays: 'Monday',
