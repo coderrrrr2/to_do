@@ -5,16 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/color_scheme.dart';
 import 'package:to_do_app/models/to_do.dart';
-import 'package:to_do_app/providers/isSearchingProvider.dart';
+import 'package:to_do_app/providers/isButtonPressedProvider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
-import 'package:to_do_app/providers/toDo_provider.dart';
+import 'package:to_do_app/providers/toDoProvider.dart';
 import 'package:to_do_app/screens/edit_toDo.dart';
 import 'package:to_do_app/widgets/toDo_tile.dart';
 
 class HomeBody extends ConsumerStatefulWidget {
   HomeBody({super.key, List<ToDo>? searchedToDo})
       : searchedToDo = searchedToDo ?? [];
-  final List<ToDo>? searchedToDo;
+  final List<ToDo> searchedToDo;
 
   @override
   ConsumerState<HomeBody> createState() => _HomeBodyState();
@@ -24,8 +24,8 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
   List<String> headerName = [
     "Due This Week",
     "Due Next Week",
-    "Due Next Month",
     "Due Later This Month",
+    "Due Next Month",
     "Due Later"
   ];
   void removeToDo(ToDo todo) {
@@ -85,9 +85,9 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
   @override
   Widget build(BuildContext context) {
     List<Widget> bodys = [];
-    int? currentIndex;
+    final isButtonPressed = ref.watch(buttonPressedProvider);
+
     final listOfToDo = ref.watch(listManipulatorProvider);
-    final isSearching = ref.watch(searchingProvider);
     final theme = ref.watch(settingsProvider);
 
     Widget body = Padding(
@@ -117,10 +117,11 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
         if (editedList.isNotEmpty) {
           // Create a list of
           List<Widget> todoWidgets = editedList.map((todo) {
+            final index = editedList.indexOf(todo); // Get the index directly
+
             return GestureDetector(
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>
-                    EditToDo(todo: todo, index: currentIndex!),
+                builder: (context) => EditToDo(todo: todo, index: index),
               )),
               child: Container(
                 margin: const EdgeInsets.only(
@@ -162,33 +163,32 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
               ...todoWidgets, // Use the spread operator to add the list of to-do item widgets
             ],
           ));
-          body = ListView.builder(
-            itemCount: bodys.length,
-            itemBuilder: (context, index) {
-              currentIndex = index;
-              return bodys[index];
-            },
-          );
         }
       }
-    }
-    if (isSearching && widget.searchedToDo!.isNotEmpty) {
       body = ListView.builder(
-        itemCount: widget.searchedToDo!.length,
+        itemCount: bodys.length,
+        itemBuilder: (context, index) {
+          return bodys[index];
+        },
+      );
+    }
+    if (isButtonPressed && widget.searchedToDo.isNotEmpty) {
+      body = ListView.builder(
+        itemCount: widget.searchedToDo.length,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.only(top: 8, left: 4, right: 4),
             child: GestureDetector(
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => EditToDo(
-                  todo: widget.searchedToDo![index],
+                  todo: widget.searchedToDo[index],
                   index: index,
                 ),
               )),
               child: Dismissible(
-                key: Key(widget.searchedToDo![index].id),
+                key: Key(widget.searchedToDo[index].id),
                 onDismissed: (direction) async {
-                  removeToDo(widget.searchedToDo![index]);
+                  removeToDo(widget.searchedToDo[index]);
                 },
                 direction: DismissDirection.horizontal,
                 movementDuration: const Duration(milliseconds: 900),
@@ -198,7 +198,7 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
                   DismissDirection.endToStart: 0.6,
                 },
                 child: ToDoTile(
-                  todo: widget.searchedToDo![index],
+                  todo: widget.searchedToDo[index],
                 ),
               ),
             ),

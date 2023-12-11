@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:to_do_app/color_scheme.dart';
 import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
-import 'package:to_do_app/providers/toDo_provider.dart';
+import 'package:to_do_app/providers/toDoProvider.dart';
 
 final formatter = DateFormat.yMd();
 

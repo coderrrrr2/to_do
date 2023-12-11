@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:to_do_app/providers/isButtonPressedProvider.dart';
 import 'package:to_do_app/providers/isSearchingProvider.dart';
 import 'package:to_do_app/screens/add_new_todo.dart';
 import 'package:to_do_app/widgets/app_bar_content.dart';
@@ -28,6 +29,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final isSearching = ref.watch(searchingProvider);
+    final isButtonPressed = ref.watch(buttonPressedProvider);
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -40,6 +43,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ? IconButton(
                     onPressed: () {
                       updateSearchingValue(!isSearching);
+                      ref
+                          .read(buttonPressedProvider.notifier)
+                          .setSearching(!isButtonPressed);
                     },
                     icon: const Icon(Icons.arrow_back_sharp))
                 : IconButton(

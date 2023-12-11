@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/models/to_do.dart';
+import 'package:to_do_app/providers/isButtonPressedProvider.dart';
 import 'package:to_do_app/providers/isSearchingProvider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/providers/toDoProvider.dart';
@@ -13,14 +14,16 @@ import 'package:to_do_app/widgets/home_body.dart';
 enum MenuAction { settings, about, rate }
 
 class AppBarContent extends ConsumerStatefulWidget {
-  const AppBarContent({super.key});
+  const AppBarContent({
+    super.key,
+  });
 
   @override
   ConsumerState<AppBarContent> createState() => _AppBarContentState();
 }
 
 class _AppBarContentState extends ConsumerState<AppBarContent> {
-  List<ToDo>? searchTaskName(String value, List<ToDo> listOfToDo) {
+  List<ToDo>? returnSearchedTasks(String value, List<ToDo> listOfToDo) {
     final listOfTaskNames =
         listOfToDo.where((element) => element.taskName == value).toList();
     return listOfTaskNames;
@@ -69,6 +72,7 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
   @override
   Widget build(BuildContext context) {
     final isSearching = ref.watch(searchingProvider);
+    final isButtonPressed = ref.watch(buttonPressedProvider);
 
     // listens for changes and updates the variables
     final theme = ref.watch(settingsProvider);
@@ -129,14 +133,18 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
                               return;
                             }
 
-                            List<ToDo>? searchedToDo = searchTaskName(
+                            List<ToDo>? searchedToDo = returnSearchedTasks(
                                 searchBarTextField.text, listOfToDo);
                             HomeBody(
                               searchedToDo: searchedToDo,
                             );
                             if (searchedToDo!.isEmpty) {
                               _showAlertDialog(context);
+                              return;
                             }
+                            ref
+                                .read(buttonPressedProvider.notifier)
+                                .setSearching(!isButtonPressed);
                           },
                           icon: const Icon(Icons.search)),
                       SizedBox(
