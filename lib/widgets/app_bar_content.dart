@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/isSearchingProvider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
-import 'package:to_do_app/providers/toDo_provider.dart';
+import 'package:to_do_app/providers/toDoProvider.dart';
 import 'package:to_do_app/screens/settings.dart';
 import 'package:to_do_app/widgets/home_body.dart';
 
