@@ -1,15 +1,14 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/isButtonPressedProvider.dart';
-import 'package:to_do_app/providers/isSearchingProvider.dart';
+import 'package:to_do_app/providers/is_searching_provider.dart';
+import 'package:to_do_app/providers/searced_todo_provider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/providers/toDoProvider.dart';
 import 'package:to_do_app/screens/settings.dart';
-import 'package:to_do_app/widgets/home_body.dart';
 
 enum MenuAction { settings, about, rate }
 
@@ -26,9 +25,7 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
   TextEditingController searchBarTextField = TextEditingController(text: '');
 
   List<ToDo> returnSearchedTasks(String value, List<ToDo> listOfToDo) {
-    final listOfTaskNames =
-        listOfToDo.where((element) => element.taskName == value).toList();
-    return listOfTaskNames;
+    return listOfToDo.where((element) => element.taskName == value).toList();
   }
 
   void updateSearchingValue(bool value) {
@@ -71,15 +68,24 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
           ));
   }
 
+  void showErroMessageIfTextEmpty() {}
+
+  List<ToDo> setSearchedArray(List<ToDo> listOfToDo) {
+    return returnSearchedTasks(searchBarTextField.text, listOfToDo);
+  }
+
+  void passListToHomeScreen(
+      {required bool isButtonPressed, required List<ToDo> listOfToDo}) {}
+
   @override
   Widget build(BuildContext context) {
+    // listens for changes and updates the variables
+
     final isSearching = ref.watch(searchingProvider);
     final isButtonPressed = ref.watch(buttonPressedProvider);
-
-    // listens for changes and updates the variables
     final theme = ref.watch(settingsProvider);
     final listOfToDo = ref.watch(listManipulatorProvider);
-    // sets boolean variable for isSearching
+
     Widget appBarContent = Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -110,77 +116,74 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
               ),
             ];
           },
-        )
+        ),
       ],
     );
 
     return isSearching
-        ? appBarContent = Consumer(
-            builder: (context, ref, child) => Row(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              if ((searchBarTextField.text == "")) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        duration: Duration(milliseconds: 350),
-                                        content:
-                                            Text("You must enter some text")));
-                                return;
+        ? appBarContent = Row(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            if ((searchBarTextField.text == "")) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      duration: Duration(milliseconds: 380),
+                                      content:
+                                          Text("You must enter some text")));
+                              return;
+                            }
+                            var searchedToDo = returnSearchedTasks(
+                                searchBarTextField.text, listOfToDo);
+                            if (searchedToDo.isEmpty) {
+                              _showAlertDialog(context);
+                            } else {
+                              ref
+                                  .read(searchedToDoProvider.notifier)
+                                  .set(searchedToDo);
+                              if (!isButtonPressed) {
+                                ref
+                                    .read(buttonPressedProvider.notifier)
+                                    .setSearching(!isButtonPressed);
                               }
-
-                              List<ToDo>? searchedToDo = returnSearchedTasks(
-                                  searchBarTextField.text, listOfToDo);
-                              if (searchedToDo.isEmpty) {
-                                _showAlertDialog(context);
-                              } else {
-                                HomeBody(
-                                  searchedToDo: searchedToDo,
-                                );
-                                if (!isButtonPressed) {
-                                  ref
-                                      .read(buttonPressedProvider.notifier)
-                                      .setSearching(!isButtonPressed);
-                                }
-                              }
-                            },
-                            icon: const Icon(Icons.search)),
-                        SizedBox(
-                          height: 50,
-                          width: 300,
-                          child: TextField(
-                            controller: searchBarTextField,
-                            style: TextStyle(
-                              color: theme.isLightMode == true
-                                  ? Colors.black
-                                  : Colors.white,
+                            }
+                          },
+                          icon: const Icon(Icons.search)),
+                      SizedBox(
+                        height: 50,
+                        width: 300,
+                        child: TextField(
+                          controller: searchBarTextField,
+                          style: TextStyle(
+                            color: theme.isLightMode == true
+                                ? Colors.black
+                                : Colors.white,
+                          ),
+                          decoration: InputDecoration(
+                            fillColor: theme.isLightMode == true
+                                ? Colors.black
+                                : Colors.white,
+                            hintText: 'Search...',
+                            border: const OutlineInputBorder(
+                              borderSide: BorderSide.none,
                             ),
-                            decoration: InputDecoration(
-                              fillColor: theme.isLightMode == true
-                                  ? Colors.black
-                                  : Colors.white,
-                              hintText: 'Search...',
-                              border: const OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                              ),
-                              focusedBorder: const OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                              ),
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide.none,
                             ),
                           ),
-                        )
-                      ],
-                    )
-                  ],
-                )
-              ],
-            ),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              )
+            ],
           )
         : appBarContent;
   }

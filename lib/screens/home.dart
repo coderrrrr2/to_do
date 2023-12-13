@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/providers/isButtonPressedProvider.dart';
-import 'package:to_do_app/providers/isSearchingProvider.dart';
+import 'package:to_do_app/providers/is_searching_provider.dart';
 import 'package:to_do_app/screens/add_new_todo.dart';
 import 'package:to_do_app/widgets/app_bar_content.dart';
 import 'package:to_do_app/widgets/home_body.dart';

@@ -1,5 +1,4 @@
 // ignore_for_file: file_names
-import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +43,6 @@ class _ToDoTileState extends ConsumerState<ToDoTile>
   }
 
   Future<bool> returnTodoStatus() async {
-    log(widget.todo.toString());
     return await (Platform.isIOS
         ? showCupertinoDialog<bool>(
             context: context,
@@ -98,7 +96,6 @@ class _ToDoTileState extends ConsumerState<ToDoTile>
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(settingsProvider);
-    log(widget.todo.toString());
 
     return Container(
       margin: const EdgeInsets.all(10),

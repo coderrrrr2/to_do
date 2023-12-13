@@ -1,20 +1,18 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/color_scheme.dart';
 import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/isButtonPressedProvider.dart';
+import 'package:to_do_app/providers/searced_todo_provider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/providers/toDoProvider.dart';
 import 'package:to_do_app/screens/edit_toDo.dart';
 import 'package:to_do_app/widgets/toDo_tile.dart';
 
 class HomeBody extends ConsumerStatefulWidget {
-  HomeBody({super.key, List<ToDo>? searchedToDo})
-      : searchedToDo = searchedToDo ?? [];
-  final List<ToDo> searchedToDo;
+  const HomeBody({super.key});
 
   @override
   ConsumerState<HomeBody> createState() => _HomeBodyState();
@@ -36,7 +34,7 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
     ref.read(listManipulatorProvider.notifier).add(todo);
   }
 
-  Future<bool> returnTodoStatus() async {
+  Future<bool> alertDialogForListTile() async {
     return await (Platform.isIOS
         ? showCupertinoDialog<bool>(
             context: context,
@@ -86,7 +84,7 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
   Widget build(BuildContext context) {
     List<Widget> bodys = [];
     final isButtonPressed = ref.watch(buttonPressedProvider);
-
+    final searchedToDo = ref.watch(searchedToDoProvider);
     final listOfToDo = ref.watch(listManipulatorProvider);
     final theme = ref.watch(settingsProvider);
 
@@ -129,12 +127,14 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
                 ),
                 child: Dismissible(
                   key: Key(todo.id),
-                  onDismissed: (direction) async {
+                  onDismissed: (direction) {
                     removeToDo(todo);
+                    ref.read(searchedToDoProvider.notifier).remove(todo);
                   },
                   direction: DismissDirection.horizontal,
                   movementDuration: const Duration(milliseconds: 900),
-                  confirmDismiss: (direction) async => await returnTodoStatus(),
+                  confirmDismiss: (direction) async =>
+                      await alertDialogForListTile(),
                   dismissThresholds: const {
                     DismissDirection.startToEnd: 0.6,
                     DismissDirection.endToStart: 0.6,
@@ -174,31 +174,32 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
     }
     if (isButtonPressed) {
       body = ListView.builder(
-        itemCount: widget.searchedToDo.length,
+        itemCount: searchedToDo.length,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.only(top: 8, left: 4, right: 4),
             child: GestureDetector(
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => EditToDo(
-                  todo: widget.searchedToDo[index],
+                  todo: searchedToDo[index],
                   index: index,
                 ),
               )),
               child: Dismissible(
-                key: Key(widget.searchedToDo[index].id),
-                onDismissed: (direction) async {
-                  removeToDo(widget.searchedToDo[index]);
+                key: Key(searchedToDo[index].id),
+                onDismissed: (direction) {
+                  removeToDo(searchedToDo[index]);
                 },
                 direction: DismissDirection.horizontal,
                 movementDuration: const Duration(milliseconds: 900),
-                confirmDismiss: (direction) async => await returnTodoStatus(),
+                confirmDismiss: (direction) async =>
+                    await alertDialogForListTile(),
                 dismissThresholds: const {
                   DismissDirection.startToEnd: 0.6,
                   DismissDirection.endToStart: 0.6,
                 },
                 child: ToDoTile(
-                  todo: widget.searchedToDo[index],
+                  todo: searchedToDo[index],
                 ),
               ),
             ),

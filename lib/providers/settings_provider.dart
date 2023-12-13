@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/models/settings.dart';
 
@@ -37,7 +35,6 @@ class SettingsProvider extends StateNotifier<Settings> {
   }
 
   void changeNotifications(bool item) {
-    log(isLightMode.toString());
     isNotifications = item;
     state = Settings(
         isNotifications: item,
