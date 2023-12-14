@@ -10,6 +10,7 @@ class ToDo {
   final TimeOfDay time;
   late String taskDayClassification;
   final String repeatTaskDays;
+  bool isChecked;
 
   ToDo({
     required this.taskName,
@@ -17,7 +18,9 @@ class ToDo {
     required this.time,
     required this.repeatTaskDays,
     String? id,
-  }) : id = id ?? const Uuid().v4() {
+    bool? isChecked,
+  })  : id = id ?? const Uuid().v4(),
+        isChecked = isChecked ?? false {
     taskDayClassification = _setTaskDayClassification(date);
   }
 

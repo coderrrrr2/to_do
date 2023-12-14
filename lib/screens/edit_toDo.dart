@@ -4,9 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:to_do_app/color_scheme.dart';
 import 'package:to_do_app/models/to_do.dart';
+import 'package:to_do_app/providers/isButtonPressedProvider.dart';
 import 'package:to_do_app/providers/searced_todo_provider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
-import 'package:to_do_app/providers/toDoProvider.dart';
+import 'package:to_do_app/providers/to_do_provider.dart';
 
 final formatter = DateFormat.yMd();
 
@@ -89,7 +90,7 @@ class _EditToDoState extends ConsumerState<EditToDo> {
   }
 
   void deletedMainListToDo(ToDo todo) {
-    ref.read(listManipulatorProvider.notifier).remove(widget.todo);
+    ref.read(listManipulatorProvider.notifier).remove(todo);
   }
 
   void deleteSearchListToDo(ToDo todo) {
@@ -97,13 +98,13 @@ class _EditToDoState extends ConsumerState<EditToDo> {
   }
 
   void updateToDo(ToDo todo) {
-    deletedMainListToDo(todo);
+    final isButtonPressed = ref.watch(buttonPressedProvider);
+    if (isButtonPressed) {
+      deleteSearchListToDo(widget.todo);
+      ref.read(searchedToDoProvider.notifier).insert(todo, widget.index);
+    }
+    deletedMainListToDo(widget.todo);
     ref.read(listManipulatorProvider.notifier).editToDo(todo, widget.index);
-
-    ref.read(searchedToDoProvider.notifier).set([]);
-
-    ref.read(searchedToDoProvider.notifier).insert(todo, widget.index);
-
     Navigator.of(context).pop();
   }
 

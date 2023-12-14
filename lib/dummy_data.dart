@@ -9,13 +9,13 @@ final dummyData = [
     repeatTaskDays: 'Monday',
   ),
   ToDo(
-    taskName: 'Task 2',
+    taskName: 's',
     date: DateTime.now().add(const Duration(days: 1)),
     time: TimeOfDay.now(),
     repeatTaskDays: 'Friday',
   ),
   ToDo(
-    taskName: 'Task 3',
+    taskName: 's',
     date: DateTime.now().add(const Duration(days: 2)),
     time: TimeOfDay.now(),
     repeatTaskDays: 'Wednesday',

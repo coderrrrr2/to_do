@@ -7,7 +7,7 @@ import 'package:to_do_app/providers/isButtonPressedProvider.dart';
 import 'package:to_do_app/providers/is_searching_provider.dart';
 import 'package:to_do_app/providers/searced_todo_provider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
-import 'package:to_do_app/providers/toDoProvider.dart';
+import 'package:to_do_app/providers/to_do_provider.dart';
 import 'package:to_do_app/screens/settings.dart';
 
 enum MenuAction { settings, about, rate }

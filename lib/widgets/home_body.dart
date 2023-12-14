@@ -7,7 +7,7 @@ import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/isButtonPressedProvider.dart';
 import 'package:to_do_app/providers/searced_todo_provider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
-import 'package:to_do_app/providers/toDoProvider.dart';
+import 'package:to_do_app/providers/to_do_provider.dart';
 import 'package:to_do_app/screens/edit_toDo.dart';
 import 'package:to_do_app/widgets/toDo_tile.dart';
 

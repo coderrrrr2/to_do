@@ -32,8 +32,6 @@ class ToDoTile extends ConsumerStatefulWidget {
 
 class _ToDoTileState extends ConsumerState<ToDoTile>
     with SingleTickerProviderStateMixin {
-  bool isChecked = false;
-
   String formatTime(TimeOfDay timeOfDay) {
     final hour = timeOfDay.hourOfPeriod;
     final minute = timeOfDay.minute.toString().padLeft(2, '0');
@@ -111,10 +109,10 @@ class _ToDoTileState extends ConsumerState<ToDoTile>
               children: [
                 Checkbox(
                     key: Key(widget.todo.id),
-                    value: isChecked,
+                    value: widget.todo.isChecked,
                     onChanged: (value) {
                       setState(() {
-                        isChecked = value!;
+                        widget.todo.isChecked = value!;
                       });
                     }),
                 Column(
