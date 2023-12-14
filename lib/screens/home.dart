@@ -16,20 +16,20 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  bool isSearching = false;
-  bool isEdited = false;
-  bool isChecked = false;
-  Widget body = HomeBody();
+  Widget body = const HomeBody();
   Widget appBarContent = const AppBarContent();
 
   void updateSearchingValue(bool value) {
     ref.watch(searchingProvider.notifier).setSearching(value);
   }
 
+  void setSearchButtonPressedChecker(bool value) {
+    ref.read(buttonPressedProvider.notifier).setSearching(value);
+  }
+
   @override
   Widget build(BuildContext context) {
     final isSearching = ref.watch(searchingProvider);
-    final isButtonPressed = ref.watch(buttonPressedProvider);
 
     return GestureDetector(
       onTap: () {
@@ -43,9 +43,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ? IconButton(
                     onPressed: () {
                       updateSearchingValue(!isSearching);
-                      ref
-                          .read(buttonPressedProvider.notifier)
-                          .setSearching(!isButtonPressed);
+                      setSearchButtonPressedChecker(false);
                     },
                     icon: const Icon(Icons.arrow_back_sharp))
                 : IconButton(

@@ -11,6 +11,10 @@ class SearchedToDoProvider extends StateNotifier<List<ToDo>> {
   void remove(ToDo todo) {
     state = state.where((element) => element != todo).toList();
   }
+
+  void insert(ToDo todo, int index) {
+    state.insert(index, todo);
+  }
 }
 
 final searchedToDoProvider =

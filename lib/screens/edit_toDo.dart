@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:to_do_app/color_scheme.dart';
 import 'package:to_do_app/models/to_do.dart';
+import 'package:to_do_app/providers/searced_todo_provider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/providers/toDoProvider.dart';
 
@@ -87,10 +88,21 @@ class _EditToDoState extends ConsumerState<EditToDo> {
     formattedTime = formatTime(selectedTime!);
   }
 
-  void submitForm(ToDo todo) {
-    final newToDo = todo;
+  void deletedMainListToDo(ToDo todo) {
     ref.read(listManipulatorProvider.notifier).remove(widget.todo);
-    ref.read(listManipulatorProvider.notifier).editToDo(newToDo, widget.index);
+  }
+
+  void deleteSearchListToDo(ToDo todo) {
+    ref.read(searchedToDoProvider.notifier).remove(todo);
+  }
+
+  void updateToDo(ToDo todo) {
+    deletedMainListToDo(todo);
+    ref.read(listManipulatorProvider.notifier).editToDo(todo, widget.index);
+
+    ref.read(searchedToDoProvider.notifier).set([]);
+
+    ref.read(searchedToDoProvider.notifier).insert(todo, widget.index);
 
     Navigator.of(context).pop();
   }
@@ -190,7 +202,9 @@ class _EditToDoState extends ConsumerState<EditToDo> {
                           width: 322,
                           margin: const EdgeInsets.all(15),
                           child: Text(
-                            formatter.format(enteredDate!),
+                            enteredDate == null
+                                ? "Date Not Set"
+                                : formatter.format(enteredDate!),
                             style: TextStyle(
                                 color: Theme.of(context)
                                     .textTheme
@@ -234,7 +248,9 @@ class _EditToDoState extends ConsumerState<EditToDo> {
                           margin: const EdgeInsets.all(15),
                           width: 300,
                           child: Text(
-                            formattedTime,
+                            selectedTime == null
+                                ? "No Time set"
+                                : formattedTime,
                             style: TextStyle(
                                 color: Theme.of(context)
                                     .textTheme
@@ -312,7 +328,7 @@ class _EditToDoState extends ConsumerState<EditToDo> {
               ? FloatingActionButton(
                   onPressed: () {
                     if (enteredDate != null && selectedTime != null) {
-                      submitForm(ToDo(
+                      updateToDo(ToDo(
                           taskName: taskController!.text,
                           date: enteredDate!,
                           time: selectedTime!,

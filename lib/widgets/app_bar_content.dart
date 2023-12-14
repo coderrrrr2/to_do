@@ -24,35 +24,18 @@ class AppBarContent extends ConsumerStatefulWidget {
 class _AppBarContentState extends ConsumerState<AppBarContent> {
   TextEditingController searchBarTextField = TextEditingController(text: '');
 
-  List<ToDo> returnSearchedTasks(String value, List<ToDo> listOfToDo) {
-    return listOfToDo.where((element) => element.taskName == value).toList();
-  }
-
-  void updateSearchingValue(bool value) {
-    ref.watch(searchingProvider.notifier).setSearching(value);
+  @override
+  void dispose() {
+    searchBarTextField.dispose();
+    super.dispose();
   }
 
   Future<void> _showAlertDialog(BuildContext context) async {
-    (Platform.isIOS
-        ? showCupertinoDialog<bool>(
-            context: context,
-            builder: (context) => CupertinoAlertDialog(
-              title: const Text('Tasks'),
-              content: const Text('No task matches your search'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Ok'),
-                ),
-              ],
-            ),
-          )
-        : showDialog<String>(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
+    (
+      Platform.isIOS
+          ? showCupertinoDialog<bool>(
+              context: context,
+              builder: (context) => CupertinoAlertDialog(
                 title: const Text('Tasks'),
                 content: const Text('No task matches your search'),
                 actions: <Widget>[
@@ -63,19 +46,57 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
                     child: const Text('Ok'),
                   ),
                 ],
-              );
-            },
-          ));
+              ),
+            )
+          : showDialog<String>(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Tasks'),
+                  content: const Text('No task matches your search'),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Ok'),
+                    ),
+                  ],
+                );
+              },
+            ),
+    );
   }
 
-  void showErroMessageIfTextEmpty() {}
+  List<ToDo> returnSearchedTasks(String value, List<ToDo> listOfToDo) {
+    return listOfToDo.where((element) => element.taskName == value).toList();
+  }
 
-  List<ToDo> setSearchedArray(List<ToDo> listOfToDo) {
-    return returnSearchedTasks(searchBarTextField.text, listOfToDo);
+  void updateSearchingValue(bool value) {
+    ref.watch(searchingProvider.notifier).setSearching(value);
+  }
+
+  void showErroMessageIfTextEmpty() {
+    if ((searchBarTextField.text == "")) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          duration: Duration(milliseconds: 380),
+          content: Text("You must enter some text")));
+      return;
+    }
   }
 
   void passListToHomeScreen(
-      {required bool isButtonPressed, required List<ToDo> listOfToDo}) {}
+      {required bool isButtonPressed, required List<ToDo> listOfToDo}) {
+    var searchedToDo = returnSearchedTasks(searchBarTextField.text, listOfToDo);
+    if (searchedToDo.isEmpty && searchBarTextField.text != "") {
+      _showAlertDialog(context);
+      return;
+    }
+    ref.read(searchedToDoProvider.notifier).set(searchedToDo);
+    if (!isButtonPressed && searchedToDo.isNotEmpty) {
+      ref.read(buttonPressedProvider.notifier).setSearching(!isButtonPressed);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +106,11 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
     final isButtonPressed = ref.watch(buttonPressedProvider);
     final theme = ref.watch(settingsProvider);
     final listOfToDo = ref.watch(listManipulatorProvider);
+
+    // clears textfield when searching is closed
+    if (!isSearching) {
+      searchBarTextField.clear();
+    }
 
     Widget appBarContent = Row(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -131,28 +157,10 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
                     children: [
                       IconButton(
                           onPressed: () {
-                            if ((searchBarTextField.text == "")) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      duration: Duration(milliseconds: 380),
-                                      content:
-                                          Text("You must enter some text")));
-                              return;
-                            }
-                            var searchedToDo = returnSearchedTasks(
-                                searchBarTextField.text, listOfToDo);
-                            if (searchedToDo.isEmpty) {
-                              _showAlertDialog(context);
-                            } else {
-                              ref
-                                  .read(searchedToDoProvider.notifier)
-                                  .set(searchedToDo);
-                              if (!isButtonPressed) {
-                                ref
-                                    .read(buttonPressedProvider.notifier)
-                                    .setSearching(!isButtonPressed);
-                              }
-                            }
+                            showErroMessageIfTextEmpty();
+                            passListToHomeScreen(
+                                isButtonPressed: isButtonPressed,
+                                listOfToDo: listOfToDo);
                           },
                           icon: const Icon(Icons.search)),
                       SizedBox(
