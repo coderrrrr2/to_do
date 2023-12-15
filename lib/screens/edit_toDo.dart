@@ -99,9 +99,28 @@ class _EditToDoState extends ConsumerState<EditToDo> {
 
   void updateToDo(ToDo todo) {
     final isButtonPressed = ref.watch(buttonPressedProvider);
+
     if (isButtonPressed) {
-      deleteSearchListToDo(widget.todo);
-      ref.read(searchedToDoProvider.notifier).insert(todo, widget.index);
+      final indexWhenSearching =
+          ref.watch(listManipulatorProvider.notifier).getIndex(
+                widget.todo,
+              );
+      deleteSearchListToDo(
+        widget.todo,
+      );
+      ref.read(searchedToDoProvider.notifier).insert(
+            todo,
+            widget.index,
+          );
+      deletedMainListToDo(
+        widget.todo,
+      );
+      ref.read(listManipulatorProvider.notifier).editToDo(
+            todo,
+            indexWhenSearching,
+          );
+      Navigator.of(context).pop();
+      return;
     }
     deletedMainListToDo(widget.todo);
     ref.read(listManipulatorProvider.notifier).editToDo(todo, widget.index);

@@ -167,21 +167,19 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
                         height: 50,
                         width: 300,
                         child: TextField(
+                          cursorColor: Colors.white,
                           controller: searchBarTextField,
-                          style: TextStyle(
-                            color: theme.isLightMode == true
-                                ? Colors.black
-                                : Colors.white,
+                          style: const TextStyle(
+                            color: Colors.white,
                           ),
                           decoration: InputDecoration(
-                            fillColor: theme.isLightMode == true
-                                ? Colors.black
-                                : Colors.white,
+                            hintStyle: TextStyle(
+                              color: theme.isLightMode == true
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
                             hintText: 'Search...',
                             border: const OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                            ),
-                            focusedBorder: const OutlineInputBorder(
                               borderSide: BorderSide.none,
                             ),
                           ),

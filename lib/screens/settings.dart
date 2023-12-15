@@ -169,6 +169,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                     const Spacer(),
                     IconButton(
+                        color: Colors.white,
                         onPressed: () {
                           changeMode(!isLightMode);
                         },
@@ -201,7 +202,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ),
                     ),
                     const SizedBox(
-                      width: 160,
+                      width: 225,
                     ),
                     Expanded(
                         child: Switch.adaptive(
@@ -228,17 +229,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 padding: const EdgeInsets.all(10),
                 child: Row(
                   children: [
-                    Text(
-                      language,
-                      style: TextStyle(
-                        color: theme.isLightMode == true
-                            ? Colors.black
-                            : Colors.white,
+                    Container(
+                      margin: const EdgeInsets.all(6),
+                      child: Text(
+                        language,
+                        style: TextStyle(
+                          color: theme.isLightMode == true
+                              ? Colors.black
+                              : Colors.white,
+                        ),
                       ),
                     ),
                     const Spacer(),
                     DropdownButtonHideUnderline(
                         child: DropdownButton(
+                            iconEnabledColor: Colors.white,
                             dropdownColor: theme.isLightMode == true
                                 ? Colors.white
                                 : Colors.black,
@@ -324,26 +329,29 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 height: 60,
                 child: Padding(
                   padding: const EdgeInsets.only(top: 10, left: 12, bottom: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Time Format',
-                        style: TextStyle(
-                          color: theme.isLightMode == true
-                              ? Colors.black
-                              : Colors.white,
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 6, right: 6),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Time Format',
+                          style: TextStyle(
+                            color: theme.isLightMode == true
+                                ? Colors.black
+                                : Colors.white,
+                          ),
                         ),
-                      ),
-                      Text(
-                        selectedTimeValue,
-                        style: TextStyle(
-                          color: theme.isLightMode == true
-                              ? Colors.black
-                              : Colors.white,
-                        ),
-                      )
-                    ],
+                        Text(
+                          selectedTimeValue,
+                          style: TextStyle(
+                            color: theme.isLightMode == true
+                                ? Colors.black
+                                : Colors.white,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),

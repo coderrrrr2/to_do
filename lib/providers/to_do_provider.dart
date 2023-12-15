@@ -38,6 +38,10 @@ class ListManipulator extends StateNotifier<List<ToDo>> {
   void editToDo(ToDo todo, int index) {
     state.insert(index, todo);
   }
+
+  int getIndex(ToDo todo) {
+    return state.indexOf(todo);
+  }
 }
 
 final listManipulatorProvider =
