@@ -12,6 +12,7 @@ final darkcolorScheme = ColorScheme.fromSeed(
     primary: const Color.fromARGB(255, 81, 26, 136));
 
 final lightTheme = ThemeData(
+    visualDensity: VisualDensity.adaptivePlatformDensity,
     brightness: Brightness.light,
     useMaterial3: true,
     colorScheme: lightcolorScheme,
@@ -23,6 +24,7 @@ final lightTheme = ThemeData(
         iconTheme: IconThemeData(color: Colors.white)));
 
 final darkTheme = ThemeData(
+  visualDensity: VisualDensity.adaptivePlatformDensity,
   useMaterial3: true,
   scaffoldBackgroundColor: darkcolorScheme.onBackground,
   colorScheme: darkcolorScheme,

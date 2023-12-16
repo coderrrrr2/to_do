@@ -27,6 +27,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ref.read(buttonPressedProvider.notifier).setSearching(value);
   }
 
+  void showDatePickerDialog() async {
+    final now = DateTime.now();
+    final firstDate = DateTime(now.year, now.month, now.day);
+    final lastDate = DateTime(now.year + 18, now.month, now.day);
+
+    final pickedDate = await showDatePicker(
+        context: context,
+        initialDate: now,
+        firstDate: firstDate,
+        lastDate: lastDate);
+  }
+
+  void showDateScreen() {}
+
   @override
   Widget build(BuildContext context) {
     final isSearching = ref.watch(searchingProvider);
