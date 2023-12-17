@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:to_do_app/providers/dialogBoxProvider.dart';
+import 'package:to_do_app/providers/time_dialog_box_provider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {

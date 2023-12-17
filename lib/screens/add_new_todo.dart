@@ -61,7 +61,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
   }
 
   void submitformKey(ToDo todo) {
-    ref.read(listManipulatorProvider.notifier).add(todo);
+    ref.read(toDoProvider.notifier).add(todo);
     Navigator.of(context).pop();
   }
 

@@ -4,8 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:to_do_app/color_scheme.dart';
 import 'package:to_do_app/models/to_do.dart';
-import 'package:to_do_app/providers/isButtonPressedProvider.dart';
+import 'package:to_do_app/providers/searched_button_provider.dart';
 import 'package:to_do_app/providers/searced_todo_provider.dart';
+import 'package:to_do_app/providers/searched_date_provider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/providers/to_do_provider.dart';
 
@@ -90,7 +91,7 @@ class _EditToDoState extends ConsumerState<EditToDo> {
   }
 
   void deletedMainListToDo(ToDo todo) {
-    ref.read(listManipulatorProvider.notifier).remove(todo);
+    ref.read(toDoProvider.notifier).remove(todo);
   }
 
   void deleteSearchListToDo(ToDo todo) {
@@ -99,12 +100,12 @@ class _EditToDoState extends ConsumerState<EditToDo> {
 
   void updateToDo(ToDo todo) {
     final isButtonPressed = ref.watch(buttonPressedProvider);
+    final searchedToDos = ref.watch(searchedDateProvider);
 
     if (isButtonPressed) {
-      final indexWhenSearching =
-          ref.watch(listManipulatorProvider.notifier).getIndex(
-                widget.todo,
-              );
+      final indexWhenSearching = ref.watch(toDoProvider.notifier).getIndex(
+            widget.todo,
+          );
       deleteSearchListToDo(
         widget.todo,
       );
@@ -115,15 +116,34 @@ class _EditToDoState extends ConsumerState<EditToDo> {
       deletedMainListToDo(
         widget.todo,
       );
-      ref.read(listManipulatorProvider.notifier).editToDo(
+      ref.read(toDoProvider.notifier).editToDo(
             todo,
             indexWhenSearching,
           );
       Navigator.of(context).pop();
       return;
     }
+    if (searchedToDos.isNotEmpty) {
+      final indexInMainList = ref.watch(toDoProvider.notifier).getIndex(
+            widget.todo,
+          );
+      ref.read(searchedDateProvider.notifier).remove(widget.todo);
+      ref.read(searchedDateProvider.notifier).insert(
+            todo,
+            widget.index,
+          );
+      deletedMainListToDo(
+        widget.todo,
+      );
+      ref.read(toDoProvider.notifier).editToDo(
+            todo,
+            indexInMainList,
+          );
+      Navigator.of(context).pop();
+      return;
+    }
     deletedMainListToDo(widget.todo);
-    ref.read(listManipulatorProvider.notifier).editToDo(todo, widget.index);
+    ref.read(toDoProvider.notifier).editToDo(todo, widget.index);
     Navigator.of(context).pop();
   }
 

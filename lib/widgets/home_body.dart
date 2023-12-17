@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/color_scheme.dart';
 import 'package:to_do_app/models/to_do.dart';
-import 'package:to_do_app/providers/isButtonPressedProvider.dart';
+import 'package:to_do_app/providers/searched_button_provider.dart';
 import 'package:to_do_app/providers/searced_todo_provider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/providers/to_do_provider.dart';
@@ -27,11 +27,15 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
     "Due Later"
   ];
   void removeToDo(ToDo todo) {
-    ref.read(listManipulatorProvider.notifier).remove(todo);
+    ref.read(toDoProvider.notifier).remove(todo);
   }
 
   void addToDo(ToDo todo) {
-    ref.read(listManipulatorProvider.notifier).add(todo);
+    ref.read(toDoProvider.notifier).add(todo);
+  }
+
+  void removeSearchedToDo(ToDo todo) {
+    ref.read(searchedToDoProvider.notifier).remove(todo);
   }
 
   Future<bool> alertDialogForListTile() async {
@@ -85,7 +89,7 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
     List<Widget> bodys = [];
     final isButtonPressed = ref.watch(buttonPressedProvider);
     final searchedToDo = ref.watch(searchedToDoProvider);
-    final listOfToDo = ref.watch(listManipulatorProvider);
+    final listOfToDo = ref.watch(toDoProvider);
     final theme = ref.watch(settingsProvider);
 
     Widget body = Padding(
@@ -188,7 +192,9 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
               child: Dismissible(
                 key: Key(searchedToDo[index].id),
                 onDismissed: (direction) {
-                  removeToDo(searchedToDo[index]);
+                  var currentToDo = searchedToDo[index];
+                  removeSearchedToDo(searchedToDo[index]);
+                  removeToDo(currentToDo);
                 },
                 direction: DismissDirection.horizontal,
                 movementDuration: const Duration(milliseconds: 900),

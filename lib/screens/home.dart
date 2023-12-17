@@ -1,8 +1,15 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:to_do_app/providers/isButtonPressedProvider.dart';
+import 'package:to_do_app/models/to_do.dart';
+import 'package:to_do_app/providers/searched_button_provider.dart';
 import 'package:to_do_app/providers/is_searching_provider.dart';
+import 'package:to_do_app/providers/searched_date_provider.dart';
+import 'package:to_do_app/providers/to_do_provider.dart';
 import 'package:to_do_app/screens/add_new_todo.dart';
+import 'package:to_do_app/screens/date_screen.dart';
 import 'package:to_do_app/widgets/app_bar_content.dart';
 import 'package:to_do_app/widgets/home_body.dart';
 
@@ -19,32 +26,101 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget body = const HomeBody();
   Widget appBarContent = const AppBarContent();
 
-  void updateSearchingValue(bool value) {
+  void updateIfSearching(bool value) {
     ref.watch(searchingProvider.notifier).setSearching(value);
   }
 
-  void setSearchButtonPressedChecker(bool value) {
+  void setIfSearchButtonPressedValue(bool value) {
     ref.read(buttonPressedProvider.notifier).setSearching(value);
   }
 
-  void showDatePickerDialog() async {
+  List<ToDo> getToDos() {
+    return ref.watch(toDoProvider);
+  }
+
+  Future<void> _showAlertDialog(BuildContext context) async {
+    (
+      Platform.isIOS
+          ? showCupertinoDialog<bool>(
+              context: context,
+              builder: (context) => CupertinoAlertDialog(
+                title: const Text('Tasks'),
+                content: const Text('No task matches your search'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Ok'),
+                  ),
+                ],
+              ),
+            )
+          : showDialog<String>(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Tasks'),
+                  content: const Text('No task matches your search'),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Ok'),
+                    ),
+                  ],
+                );
+              },
+            ),
+    );
+  }
+
+  Future<DateTime?> showDatePickerDialog() async {
     final now = DateTime.now();
     final firstDate = DateTime(now.year, now.month, now.day);
     final lastDate = DateTime(now.year + 18, now.month, now.day);
 
-    final pickedDate = await showDatePicker(
-        context: context,
-        initialDate: now,
-        firstDate: firstDate,
-        lastDate: lastDate);
+    return await showDatePicker(
+      initialEntryMode: DatePickerEntryMode.input,
+      context: context,
+      initialDate: now,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      fieldLabelText: 'Select date ',
+      helpText: 'Which day do you want to search for',
+    );
   }
 
-  void showDateScreen() {}
+  List<ToDo> getSearchedDateToDos(DateTime date) {
+    final todo = getToDos();
+    return todo.where((element) => element.date == date).toList();
+  }
+
+  void showDateScreen() async {
+    var dateSelected = await showDatePickerDialog();
+    if (dateSelected != null) {
+      var searchedToDos = getSearchedDateToDos(dateSelected);
+      ref.read(searchedDateProvider.notifier).set(searchedToDos);
+      if (searchedToDos.isNotEmpty) {
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => DateScreen(
+              date: dateSelected,
+            ),
+          ),
+        );
+      } else {
+        // ignore: use_build_context_synchronously
+        _showAlertDialog(context);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final isSearching = ref.watch(searchingProvider);
-
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -56,12 +132,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             leading: isSearching
                 ? IconButton(
                     onPressed: () {
-                      updateSearchingValue(!isSearching);
-                      setSearchButtonPressedChecker(false);
+                      updateIfSearching(!isSearching);
+                      setIfSearchButtonPressedValue(false);
                     },
                     icon: const Icon(Icons.arrow_back_sharp))
                 : IconButton(
-                    onPressed: () {},
+                    onPressed: showDateScreen,
                     icon: const Icon(
                       Icons.calendar_month,
                       size: 35,

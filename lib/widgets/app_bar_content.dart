@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/models/to_do.dart';
-import 'package:to_do_app/providers/isButtonPressedProvider.dart';
+import 'package:to_do_app/providers/searched_button_provider.dart';
 import 'package:to_do_app/providers/is_searching_provider.dart';
 import 'package:to_do_app/providers/searced_todo_provider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
@@ -105,7 +105,7 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
     final isSearching = ref.watch(searchingProvider);
     final isButtonPressed = ref.watch(buttonPressedProvider);
     final theme = ref.watch(settingsProvider);
-    final listOfToDo = ref.watch(listManipulatorProvider);
+    final listOfToDo = ref.watch(toDoProvider);
 
     // clears textfield when searching is closed
     if (!isSearching) {

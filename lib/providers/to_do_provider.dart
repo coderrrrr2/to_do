@@ -25,7 +25,7 @@ Future<Database> getDataBase() async {
 }
 
 class ListManipulator extends StateNotifier<List<ToDo>> {
-  ListManipulator() : super([]);
+  ListManipulator() : super([...dummyData]);
 
   void add(ToDo todo) {
     state = [...state, todo];
@@ -44,7 +44,6 @@ class ListManipulator extends StateNotifier<List<ToDo>> {
   }
 }
 
-final listManipulatorProvider =
-    StateNotifierProvider<ListManipulator, List<ToDo>>((ref) {
+final toDoProvider = StateNotifierProvider<ListManipulator, List<ToDo>>((ref) {
   return ListManipulator();
 });
