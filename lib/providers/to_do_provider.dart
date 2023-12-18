@@ -15,17 +15,13 @@ Future<Database> getDataBase() async {
       await dbInstance.execute(
         "CREATE TABLE user_todo(id TEXT PRIMARY KEY, task TEXT, time TEXT, date DATETIME)",
       );
-
-      await dbInstance.execute(
-        "CREATE TABLE user_settings(isNotifications BOOL, isLightMode BOOL, chosenLanguage TEXT, timeFormat TEXT)",
-      );
     },
   );
   return database;
 }
 
 class ListManipulator extends StateNotifier<List<ToDo>> {
-  ListManipulator() : super([...dummyData]);
+  ListManipulator() : super([]);
 
   void add(ToDo todo) {
     state = [...state, todo];

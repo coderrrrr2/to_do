@@ -6,6 +6,7 @@ import 'package:to_do_app/color_scheme.dart';
 import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/searched_button_provider.dart';
 import 'package:to_do_app/providers/searced_todo_provider.dart';
+import 'package:to_do_app/providers/searched_date_provider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/providers/to_do_provider.dart';
 import 'package:to_do_app/screens/edit_toDo.dart';
@@ -91,6 +92,7 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
     final searchedToDo = ref.watch(searchedToDoProvider);
     final listOfToDo = ref.watch(toDoProvider);
     final theme = ref.watch(settingsProvider);
+    final searchedToDos = ref.watch(searchedDateProvider);
 
     Widget body = Padding(
       padding: const EdgeInsets.only(
