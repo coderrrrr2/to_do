@@ -257,35 +257,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Container(
-                      width: 200,
-                      margin: const EdgeInsets.all(15),
-                      child: Text(
-                        repeatDays,
-                        style: TextStyle(
-                          color:
-                              theme.isLightMode ? Colors.black : Colors.white,
-                        ),
-                      )),
-                  const Spacer(),
-                  DropdownButtonHideUnderline(
-                      child: DropdownButton(
-                          dropdownColor:
-                              theme.isLightMode ? Colors.white : Colors.black,
-                          items: repeatDaysChoices
-                              .map((item) => DropdownMenuItem<String>(
-                                  value: item, child: Text(item)))
-                              .toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              repeatDays = value!;
-                            });
-                          })),
-                  const SizedBox(
-                    width: 15,
-                  )
-                ],
+                children: [],
               )
             ],
           ),
