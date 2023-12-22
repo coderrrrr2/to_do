@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:to_do_app/color_scheme.dart';
+import 'package:to_do_app/theme/color_scheme.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/screens/home.dart';
 

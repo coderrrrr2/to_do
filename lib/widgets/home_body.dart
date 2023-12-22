@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:to_do_app/color_scheme.dart';
+import 'package:to_do_app/theme/color_scheme.dart';
 import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/searched_button_provider.dart';
 import 'package:to_do_app/providers/searced_todo_provider.dart';
@@ -19,6 +19,14 @@ class HomeBody extends ConsumerStatefulWidget {
 }
 
 class _HomeBodyState extends ConsumerState<HomeBody> {
+  late Future<void> todoFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    todoFuture = ref.read(toDoProvider.notifier).loadPlaces();
+  }
+
   List<String> headerName = [
     "Due This Week",
     "Due Next Week",
@@ -213,6 +221,14 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
         },
       );
     }
-    return body;
+    return FutureBuilder(
+        future: todoFuture,
+        builder: (context, snapshot) {
+          return snapshot.connectionState == ConnectionState.waiting
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : SafeArea(child: body);
+        });
   }
 }

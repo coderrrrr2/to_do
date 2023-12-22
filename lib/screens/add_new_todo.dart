@@ -18,7 +18,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
   List<String> repeatDaysChoices = [
     "No Repat",
     "Once a day",
-    "Oncw a day(Mon-Fri)",
+    "Once a day(Mon-Fri)",
     "Once a week",
     "Once a month",
     "Once a year",
@@ -248,9 +248,9 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                    width: 200,
                     margin: const EdgeInsets.all(15),
                     child: Text(
                       repeatDays,
@@ -272,9 +272,6 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                             repeatDays = value!;
                           });
                         })),
-                const SizedBox(
-                  width: 15,
-                )
               ],
             ),
           ]),

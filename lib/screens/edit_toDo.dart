@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:to_do_app/color_scheme.dart';
+import 'package:to_do_app/theme/color_scheme.dart';
 import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/searched_button_provider.dart';
 import 'package:to_do_app/providers/searced_todo_provider.dart';
