@@ -6,12 +6,13 @@ import 'package:to_do_app/models/to_do.dart';
 class SqfLiteService {
   Future<Database> initializeDataBase() async {
     final dbPath = await sql.getDatabasesPath();
-    return await sql.openDatabase(path.join(dbPath, 'TodstoDb'),
-        onCreate: (dbInstance, version) async {
-      dbInstance.execute(
-        "CREATE TABLE user_todos (id TEXT PRIMARY KEY, taskName TEXT, time TEXT, date TEXT, taskDayClassification TEXT, repeatTaskDays TEXT, isChecked INTEGER)",
-      );
+    final dbInstance = await sql.openDatabase(path.join(dbPath, 'Todos.db'),
+        onCreate: (dbInstance, version) {
+      return dbInstance.execute(
+          "CREATE TABLE user_todos (id TEXT PRIMARY KEY, taskName TEXT, hour INTEGER, minute INTEGER, date TEXT, taskDayClassification TEXT, repeatTaskDays TEXT, isChecked INTEGER)");
     }, version: 1);
+
+    return dbInstance;
   }
 
   void insertIntoDatabase(ToDo todo) async {
@@ -19,7 +20,8 @@ class SqfLiteService {
     db.insert('user_todos', {
       'id': todo.id,
       'taskName': todo.taskName,
-      'time': todo.time.toString(),
+      'hour': todo.time.hour, // Store hour separately
+      'minute': todo.time.minute,
       'date': todo.date.toString(),
       'taskDayClassification': todo.taskDayClassification,
       'repeatTaskDays': todo.repeatTaskDays,

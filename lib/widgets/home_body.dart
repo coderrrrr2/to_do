@@ -221,14 +221,6 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
         },
       );
     }
-    return FutureBuilder(
-        future: todoFuture,
-        builder: (context, snapshot) {
-          return snapshot.connectionState == ConnectionState.waiting
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : SafeArea(child: body);
-        });
+    return SafeArea(child: body);
   }
 }

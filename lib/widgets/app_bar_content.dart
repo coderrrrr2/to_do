@@ -36,7 +36,7 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
           ? showCupertinoDialog<bool>(
               context: context,
               builder: (context) => CupertinoAlertDialog(
-                title: const Text('Tasks'),
+                title: const Text('Tasks Search'),
                 content: const Text('No task matches your search'),
                 actions: <Widget>[
                   TextButton(
@@ -52,7 +52,7 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: const Text('Tasks'),
+                  title: const Text('Tasks Search'),
                   content: const Text('No task matches your search'),
                   actions: <Widget>[
                     TextButton(
@@ -79,7 +79,7 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
   void showErroMessageIfTextEmpty() {
     if ((searchBarTextField.text == "")) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          duration: Duration(milliseconds: 380),
+          duration: Duration(milliseconds: 590),
           content: Text("You must enter some text")));
       return;
     }

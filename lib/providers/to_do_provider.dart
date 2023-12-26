@@ -11,20 +11,21 @@ class ListManipulator extends StateNotifier<List<ToDo>> {
   Future<void> loadPlaces() async {
     final db = await SqfLiteService().initializeDataBase();
     final data = await db.query('user_todos');
-    print(data);
-
-    var places = data.map((row) {
+    var todos = data.map((row) {
       return ToDo(
         taskName: row['taskName'] as String,
-        date: row['date'] as DateTime,
-        time: _parseTimeOfDay(row['time'] as String),
+        date: DateTime.parse(row['date'] as String),
+        time: TimeOfDay(
+          hour: row['hour'] as int,
+          minute: row['minute'] as int,
+        ),
         repeatTaskDays: row['repeatTaskDays'] as String,
         id: row['id'] as String,
         isChecked: row["isChecked"] == 1,
       );
     }).toList();
 
-    state = places;
+    state = todos;
   }
 
   void add(ToDo todo) async {
@@ -53,6 +54,7 @@ final toDoProvider = StateNotifierProvider<ListManipulator, List<ToDo>>((ref) {
 TimeOfDay _parseTimeOfDay(String timeString) {
   List<String> components = timeString.split(':');
   int hour = int.parse(components[0]);
-  int minute = int.parse(components[1]);
+  int minute =
+      int.parse(components[1].split(')')[0]); // Remove the closing parenthesis
   return TimeOfDay(hour: hour, minute: minute);
 }

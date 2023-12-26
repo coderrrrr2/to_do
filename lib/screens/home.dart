@@ -26,6 +26,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget body = const HomeBody();
   Widget appBarContent = const AppBarContent();
 
+  late Future<void> todoFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    todoFuture = ref.read(toDoProvider.notifier).loadPlaces();
+  }
+
   void updateIfSearching(bool value) {
     ref.watch(searchingProvider.notifier).setSearching(value);
   }
@@ -122,10 +130,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final isSearching = ref.watch(searchingProvider);
     return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
-      child: Scaffold(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
             actions: [appBarContent],
@@ -150,7 +158,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ));
               },
               child: const Icon(Icons.add)),
-          body: SafeArea(child: body)),
-    );
+          body: FutureBuilder(
+              future: todoFuture,
+              builder: (context, snapshot) {
+                return snapshot.connectionState == ConnectionState.waiting
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : SafeArea(child: body);
+              }),
+        ));
   }
 }
