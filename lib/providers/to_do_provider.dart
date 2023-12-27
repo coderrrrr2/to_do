@@ -35,7 +35,6 @@ class ListManipulator extends StateNotifier<List<ToDo>> {
 
   void remove(ToDo todo) async {
     state = state.where((element) => element != todo).toList();
-    SqfLiteService().deleteFromDataBase(todo);
   }
 
   void editToDo(ToDo todo, int index) {
@@ -50,11 +49,3 @@ class ListManipulator extends StateNotifier<List<ToDo>> {
 final toDoProvider = StateNotifierProvider<ListManipulator, List<ToDo>>((ref) {
   return ListManipulator();
 });
-
-TimeOfDay _parseTimeOfDay(String timeString) {
-  List<String> components = timeString.split(':');
-  int hour = int.parse(components[0]);
-  int minute =
-      int.parse(components[1].split(')')[0]); // Remove the closing parenthesis
-  return TimeOfDay(hour: hour, minute: minute);
-}

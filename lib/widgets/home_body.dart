@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:to_do_app/backend/sqflite_service.dart';
 import 'package:to_do_app/theme/color_scheme.dart';
 import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/searched_button_provider.dart';
@@ -140,6 +141,7 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
                 child: Dismissible(
                   key: Key(todo.id),
                   onDismissed: (direction) {
+                    SqfLiteService().deleteFromDataBase(todo);
                     removeToDo(todo);
                     ref.read(searchedToDoProvider.notifier).remove(todo);
                   },

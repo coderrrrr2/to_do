@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:to_do_app/backend/sqflite_service.dart';
 import 'package:to_do_app/theme/color_scheme.dart';
 import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/searched_button_provider.dart';
@@ -98,7 +99,7 @@ class _EditToDoState extends ConsumerState<EditToDo> {
     ref.read(searchedToDoProvider.notifier).remove(todo);
   }
 
-  void updateToDo(ToDo todo) {
+  void updateToDo(ToDo todo) async {
     final isButtonPressed = ref.watch(buttonPressedProvider);
     final searchedToDos = ref.watch(searchedDateProvider);
 
@@ -116,6 +117,7 @@ class _EditToDoState extends ConsumerState<EditToDo> {
       deletedMainListToDo(
         widget.todo,
       );
+
       ref.read(toDoProvider.notifier).editToDo(
             todo,
             indexWhenSearching,
@@ -142,8 +144,10 @@ class _EditToDoState extends ConsumerState<EditToDo> {
       Navigator.of(context).pop();
       return;
     }
+
     deletedMainListToDo(widget.todo);
     ref.read(toDoProvider.notifier).editToDo(todo, widget.index);
+    SqfLiteService().updateDataBaseValue(widget.todo, todo);
     Navigator.of(context).pop();
   }
 

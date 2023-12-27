@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:to_do_app/backend/sqflite_service.dart';
 import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/providers/to_do_provider.dart';
@@ -48,6 +49,16 @@ class _ToDoTileState extends ConsumerState<ToDoTile> {
     if (index >= 0) {
       var currentTodo = widget.todo;
       ref.read(toDoProvider.notifier).remove(widget.todo);
+      SqfLiteService().updateDataBaseValue(
+        widget.todo,
+        ToDo(
+            taskName: currentTodo.taskName,
+            date: currentTodo.date,
+            time: currentTodo.time,
+            isChecked: value,
+            repeatTaskDays: currentTodo.repeatTaskDays),
+      );
+
       ref.read(toDoProvider.notifier).editToDo(
           ToDo(
               taskName: currentTodo.taskName,

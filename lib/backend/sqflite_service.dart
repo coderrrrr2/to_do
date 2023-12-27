@@ -33,4 +33,22 @@ class SqfLiteService {
     final db = await initializeDataBase();
     await db.delete('user_todos', where: 'id == ?', whereArgs: [todo.id]);
   }
+
+  void updateDataBaseValue(ToDo oldtodo, ToDo newtodo) async {
+    final db = await initializeDataBase();
+    await db.update(
+      'user_todos',
+      {
+        'taskName': newtodo.taskName,
+        'hour': newtodo.time.hour, // Store hour separately
+        'minute': newtodo.time.minute,
+        'date': newtodo.date.toString(),
+        'taskDayClassification': newtodo.taskDayClassification,
+        'repeatTaskDays': newtodo.repeatTaskDays,
+        'isChecked': newtodo.isChecked ? 1 : 0
+      },
+      where: 'id = ?', // Use a WHERE clause to specify which record to update
+      whereArgs: [oldtodo.id],
+    );
+  }
 }
