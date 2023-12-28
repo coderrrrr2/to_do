@@ -25,7 +25,8 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
   @override
   void initState() {
     super.initState();
-    todoFuture = ref.read(toDoProvider.notifier).loadPlaces();
+    todoFuture = SqfLiteService().loadPlaces();
+    ref.read(toDoProvider.notifier).set();
   }
 
   List<String> headerName = [

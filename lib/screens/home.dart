@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:to_do_app/backend/sqflite_service.dart';
 import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/searched_button_provider.dart';
 import 'package:to_do_app/providers/is_searching_provider.dart';
@@ -31,7 +32,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    todoFuture = ref.read(toDoProvider.notifier).loadPlaces();
+    todoFuture = SqfLiteService().loadPlaces();
   }
 
   void updateIfSearching(bool value) {

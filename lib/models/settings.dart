@@ -9,4 +9,13 @@ class Settings {
   final bool isLightMode;
   final String chosenLanguage;
   final String timeFormat;
+
+  Map<String, dynamic> toMap() {
+    return {
+      'isNotifications': isNotifications,
+      'isLightMode': isLightMode,
+      'chosenLanguage': chosenLanguage,
+      'timeFormat': timeFormat
+    };
+  }
 }

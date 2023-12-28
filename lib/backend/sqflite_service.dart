@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart';
@@ -13,6 +14,24 @@ class SqfLiteService {
     }, version: 1);
 
     return dbInstance;
+  }
+
+  Future<List<ToDo>> loadPlaces() async {
+    final db = await SqfLiteService().initializeDataBase();
+    final data = await db.query('user_todos');
+    return data.map((row) {
+      return ToDo(
+        taskName: row['taskName'] as String,
+        date: DateTime.parse(row['date'] as String),
+        time: TimeOfDay(
+          hour: row['hour'] as int,
+          minute: row['minute'] as int,
+        ),
+        repeatTaskDays: row['repeatTaskDays'] as String,
+        id: row['id'] as String,
+        isChecked: row["isChecked"] == 1,
+      );
+    }).toList();
   }
 
   void insertIntoDatabase(ToDo todo) async {

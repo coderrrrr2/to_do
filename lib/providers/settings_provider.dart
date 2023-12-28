@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/models/settings.dart';
 
 bool isNotifications = false;
-bool isLightMode = true;
+final platformBrightness = PlatformDispatcher.instance.platformBrightness;
+bool isLightMode = platformBrightness == Brightness.light;
 String chosenLanguage = 'English';
 String timeFormat = '12-hour';
 
