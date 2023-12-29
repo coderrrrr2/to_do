@@ -29,7 +29,6 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
     headerName = generateHeaders();
   }
 
-  // Function to generate headers based on the current date
   List<String> generateHeaders() {
     DateTime currentDate = DateTime.now();
     DateTime nextWeek = currentDate.add(const Duration(days: 7));
@@ -44,7 +43,6 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
     ];
   }
 
-  // Function to format date range for headers
   String formatDateRange(DateTime startDate, DateTime? endDate) {
     final startDateFormat = DateFormat.yMMMd().format(startDate);
     final endDateFormat =
