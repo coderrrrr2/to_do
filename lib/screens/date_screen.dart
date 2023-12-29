@@ -8,7 +8,7 @@ import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/searched_date_provider.dart';
 import 'package:to_do_app/providers/to_do_provider.dart';
 import 'package:to_do_app/screens/edit_toDo.dart';
-import 'package:to_do_app/widgets/toDo_tile.dart';
+import 'package:to_do_app/screens/widgets/toDo_tile.dart';
 
 final formatter = DateFormat.yMd();
 

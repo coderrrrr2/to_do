@@ -1,57 +1,56 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:to_do_app/backend/shared_preferences_service.dart';
 import 'package:to_do_app/models/settings.dart';
-
-bool isNotifications = false;
-final platformBrightness = PlatformDispatcher.instance.platformBrightness;
-bool isLightMode = platformBrightness == Brightness.light;
-String chosenLanguage = 'English';
-String timeFormat = '12-hour';
 
 class SettingsProvider extends StateNotifier<Settings> {
   SettingsProvider()
       : super(
           Settings(
-              chosenLanguage: chosenLanguage,
-              isLightMode: isLightMode,
-              isNotifications: isNotifications,
-              timeFormat: timeFormat),
+            chosenLanguage: initialLanguage,
+            isLightMode: initialLightMode,
+            isNotifications: initialNotifications,
+            timeFormat: initialTimeFormat,
+          ),
         );
+  // initial variables
+  static const bool initialNotifications = false;
+
+  static bool initialLightMode =
+      WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+          Brightness.light;
+  static const String initialLanguage = 'Select Language';
+  static const String initialTimeFormat = '12-hour';
+  //single instance of sharedPreferencesService
+  final SharedPreferencesService sfService = SharedPreferencesService();
+
+  void set() async {
+    final setting = sfService.load();
+    state = await setting;
+  }
 
   void changeLanguage(String language) {
-    chosenLanguage = language;
-    state = Settings(
-        isNotifications: isNotifications,
-        isLightMode: isLightMode,
-        chosenLanguage: language,
-        timeFormat: timeFormat);
+    final newSettings = state.copyWith(chosenLanguage: language);
+    state = newSettings;
+    sfService.updateSettingsInSF(newSettings);
   }
 
   void changeLightMode(bool item) {
-    isLightMode = item;
-    state = Settings(
-        isNotifications: isNotifications,
-        isLightMode: item,
-        chosenLanguage: chosenLanguage,
-        timeFormat: timeFormat);
+    final newSettings = state.copyWith(isLightMode: item);
+    state = newSettings;
+    sfService.updateSettingsInSF(newSettings);
   }
 
   void changeNotifications(bool item) {
-    isNotifications = item;
-    state = Settings(
-        isNotifications: item,
-        isLightMode: isLightMode,
-        chosenLanguage: chosenLanguage,
-        timeFormat: timeFormat);
+    final newSettings = state.copyWith(isNotifications: item);
+    state = newSettings;
+    sfService.updateSettingsInSF(newSettings);
   }
 
   void changeTimeFormat(String item) {
-    timeFormat = item;
-    state = Settings(
-        isNotifications: isNotifications,
-        isLightMode: isLightMode,
-        chosenLanguage: chosenLanguage,
-        timeFormat: item);
+    final newSettings = state.copyWith(timeFormat: item);
+    state = newSettings;
+    sfService.updateSettingsInSF(newSettings);
   }
 }
 

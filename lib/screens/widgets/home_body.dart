@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:to_do_app/backend/sqflite_service.dart';
 import 'package:to_do_app/theme/color_scheme.dart';
 import 'package:to_do_app/models/to_do.dart';
@@ -10,7 +11,7 @@ import 'package:to_do_app/providers/searced_todo_provider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/providers/to_do_provider.dart';
 import 'package:to_do_app/screens/edit_toDo.dart';
-import 'package:to_do_app/widgets/toDo_tile.dart';
+import 'package:to_do_app/screens/widgets/toDo_tile.dart';
 
 class HomeBody extends ConsumerStatefulWidget {
   const HomeBody({super.key});
@@ -20,22 +21,37 @@ class HomeBody extends ConsumerStatefulWidget {
 }
 
 class _HomeBodyState extends ConsumerState<HomeBody> {
-  late Future<void> todoFuture;
+  late List<String> headerName;
 
   @override
   void initState() {
     super.initState();
-    todoFuture = SqfLiteService().loadPlaces();
-    ref.read(toDoProvider.notifier).set();
+    headerName = generateHeaders();
   }
 
-  List<String> headerName = [
-    "Due This Week",
-    "Due Next Week",
-    "Due Later This Month",
-    "Due Next Month",
-    "Due Later"
-  ];
+  // Function to generate headers based on the current date
+  List<String> generateHeaders() {
+    DateTime currentDate = DateTime.now();
+    DateTime nextWeek = currentDate.add(const Duration(days: 7));
+    DateTime nextMonth = currentDate.add(const Duration(days: 30));
+
+    return [
+      if (currentDate.isBefore(nextWeek)) "Due This Week",
+      if (currentDate.isBefore(nextMonth)) "Due Next Week",
+      if (nextMonth.month == currentDate.month) "Due Later This Month",
+      if (nextMonth.month != currentDate.month) "Due Next Month",
+      "Due Later"
+    ];
+  }
+
+  // Function to format date range for headers
+  String formatDateRange(DateTime startDate, DateTime? endDate) {
+    final startDateFormat = DateFormat.yMMMd().format(startDate);
+    final endDateFormat =
+        endDate != null ? DateFormat.yMMMd().format(endDate) : "onwards";
+    return "$startDateFormat - $endDateFormat";
+  }
+
   void removeToDo(ToDo todo) {
     ref.read(toDoProvider.notifier).remove(todo);
   }
@@ -102,13 +118,10 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
     final listOfToDo = ref.watch(toDoProvider);
     final theme = ref.watch(settingsProvider);
 
-    Widget body = Padding(
-      padding: const EdgeInsets.only(
-        top: 300,
-        left: 150,
-        right: 100,
-      ),
+    Widget body = Center(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.asset('assets/images/fluent-mdl2_vacation.png'),
           const SizedBox(

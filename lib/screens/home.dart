@@ -1,18 +1,20 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:to_do_app/backend/shared_preferences_service.dart';
 import 'package:to_do_app/backend/sqflite_service.dart';
+import 'package:to_do_app/models/settings.dart';
 import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/searched_button_provider.dart';
 import 'package:to_do_app/providers/is_searching_provider.dart';
 import 'package:to_do_app/providers/searched_date_provider.dart';
+import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/providers/to_do_provider.dart';
 import 'package:to_do_app/screens/add_new_todo.dart';
 import 'package:to_do_app/screens/date_screen.dart';
-import 'package:to_do_app/widgets/app_bar_content.dart';
-import 'package:to_do_app/widgets/home_body.dart';
+import 'package:to_do_app/screens/widgets/app_bar_content.dart';
+import 'package:to_do_app/screens/widgets/home_body.dart';
 
 // enum for the settings value
 
@@ -28,14 +30,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget appBarContent = const AppBarContent();
 
   late Future<void> todoFuture;
+  late Future<Settings> settingsFuture;
 
   @override
   void initState() {
     super.initState();
     todoFuture = SqfLiteService().loadPlaces();
+    settingsFuture = SharedPreferencesService().load();
+    ref.read(toDoProvider.notifier).set();
+    ref.read(settingsProvider.notifier).set();
   }
 
-  void updateIfSearching(bool value) {
+  void updateIfSearchingValue(bool value) {
     ref.watch(searchingProvider.notifier).setSearching(value);
   }
 
@@ -141,7 +147,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             leading: isSearching
                 ? IconButton(
                     onPressed: () {
-                      updateIfSearching(!isSearching);
+                      updateIfSearchingValue(!isSearching);
                       setIfSearchButtonPressedValue(false);
                     },
                     icon: const Icon(Icons.arrow_back_sharp))
@@ -160,7 +166,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               },
               child: const Icon(Icons.add)),
           body: FutureBuilder(
-              future: todoFuture,
+              future: Future.wait([todoFuture, settingsFuture]),
               builder: (context, snapshot) {
                 return snapshot.connectionState == ConnectionState.waiting
                     ? const Center(

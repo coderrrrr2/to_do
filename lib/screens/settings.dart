@@ -23,16 +23,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool isNotifications = false;
   bool isLightMode = true;
   String selectedTimeValue = '';
-  String firstDayOfTheWeek = '';
   String language = 'Select Language';
 
   //setter and getter methods
-  void updateFirstDayOfTheWeek(String value) {
-    ref.read(firstDayOfTheWeekProvider.notifier).setFirstDayOfTheWeek(value);
+  void updateTimeFormatProvierValue(String selectedTimeValue) {
+    ref.read(timeFormatProvider.notifier).setTimeValue(selectedTimeValue);
+    updateSettingsProviderWithSelectedTimeFormat(selectedTimeValue);
   }
 
-  void updateSelectedTimeValue(String value) {
-    ref.read(timeValueProvider.notifier).setTimeValue(value);
+  void updateSettingsProviderWithSelectedTimeFormat(String selectedTimeFormat) {
+    ref.read(settingsProvider.notifier).changeTimeFormat(selectedTimeFormat);
   }
 
   void changeMode(bool item) {
@@ -43,6 +43,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     ref.read(settingsProvider.notifier).changeNotifications(item);
   }
 
+  void changeLanguage(String item) {
+    ref.read(settingsProvider.notifier).changeLanguage(item);
+  }
+
   void showTimeFormatDialogBox() {
     showDialog(
       context: context,
@@ -50,77 +54,27 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         title: const Text('Time Format'),
         content: Consumer(
           builder: (context, ref, child) {
-            selectedTimeValue = ref.watch(timeValueProvider);
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                RadioListTile<String>(
-                  title: const Text("12-hour"),
-                  value: '12-hour',
-                  groupValue: selectedTimeValue,
-                  onChanged: (value) {
-                    updateSelectedTimeValue(value!);
-                  },
-                ),
-                RadioListTile<String>(
-                  title: const Text("24-hour"),
-                  value: '24-hour',
-                  groupValue: selectedTimeValue,
-                  onChanged: (value) {
-                    updateSelectedTimeValue(value!);
-                  },
-                ),
-              ],
-            );
+            selectedTimeValue = ref.watch(timeFormatProvider);
+            return Column(mainAxisSize: MainAxisSize.min, children: [
+              RadioListTile<String>(
+                title: const Text("12-hour"),
+                value: '12-hour',
+                groupValue: selectedTimeValue,
+                onChanged: (value) {
+                  updateTimeFormatProvierValue(value!);
+                },
+              ),
+              RadioListTile<String>(
+                title: const Text("24-hour"),
+                value: '24-hour',
+                groupValue: selectedTimeValue,
+                onChanged: (value) {
+                  updateTimeFormatProvierValue(value!);
+                },
+              ),
+            ]);
           },
         ),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void chooseFirstWeekDialogBox() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Start Week:'),
-        content: Consumer(builder: (context, ref, child) {
-          firstDayOfTheWeek = ref.watch(firstDayOfTheWeekProvider);
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              RadioListTile<String>(
-                title: const Text("Sunday"),
-                value: 'Sunday',
-                groupValue: firstDayOfTheWeek,
-                onChanged: (value) {
-                  updateFirstDayOfTheWeek(value!);
-                },
-              ),
-              RadioListTile<String>(
-                title: const Text("Monday"),
-                value: 'Monday',
-                groupValue: firstDayOfTheWeek,
-                onChanged: (value) {
-                  updateFirstDayOfTheWeek(value!);
-                },
-              ),
-              RadioListTile<String>(
-                title: const Text("Saturday"),
-                value: 'Saturday',
-                groupValue: firstDayOfTheWeek,
-                onChanged: (value) {
-                  updateFirstDayOfTheWeek(value!);
-                },
-              ),
-            ],
-          );
-        }),
         actions: [
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
@@ -134,10 +88,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     //listens to changes in the state of the provider and updates the variables accordingly
-    selectedTimeValue = ref.watch(timeValueProvider);
-    firstDayOfTheWeek = ref.watch(firstDayOfTheWeekProvider);
+    selectedTimeValue = ref.watch(timeFormatProvider);
     isNotifications = ref.watch(settingsProvider).isNotifications;
     isLightMode = ref.watch(settingsProvider).isLightMode;
+    language = ref.watch(settingsProvider).chosenLanguage;
     final theme = ref.watch(settingsProvider);
 
     return Scaffold(
@@ -252,8 +206,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                     value: item, child: Text(item)))
                                 .toList(),
                             onChanged: (value) {
+                              changeLanguage(value!);
                               setState(() {
-                                language = value!;
+                                language = value;
                               });
                             })),
                   ],
