@@ -2,10 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:to_do_app/backend/sqflite_service.dart';
 import 'package:to_do_app/theme/color_scheme.dart';
 import 'package:to_do_app/models/to_do.dart';
-import 'package:to_do_app/providers/searched_button_provider.dart';
+import 'package:to_do_app/providers/searched_initiated_provider.dart';
 import 'package:to_do_app/providers/searced_todo_provider.dart';
 import 'package:to_do_app/providers/searched_date_provider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
@@ -100,54 +99,27 @@ class _EditToDoState extends ConsumerState<EditToDo> {
   }
 
   void updateToDo(ToDo todo) async {
-    final isButtonPressed = ref.watch(buttonPressedProvider);
+    final isSearchInitiated = ref.watch(isSearchInitiatedProvider);
     final searchedToDos = ref.watch(searchedDateProvider);
+    final listManipulator = ref.read(toDoProvider.notifier);
+    final oldToDo = widget.todo;
+    final newToDo = todo;
+    final indexInMainList = listManipulator.getIndex(oldToDo);
 
-    if (isButtonPressed) {
-      final indexWhenSearching = ref.watch(toDoProvider.notifier).getIndex(
-            widget.todo,
-          );
-      deleteSearchListToDo(
-        widget.todo,
-      );
-      ref.read(searchedToDoProvider.notifier).insert(
-            todo,
-            widget.index,
-          );
-      deletedMainListToDo(
-        widget.todo,
-      );
-
-      ref.read(toDoProvider.notifier).editToDo(
-            todo,
-            indexWhenSearching,
-          );
-      Navigator.of(context).pop();
-      return;
-    }
-    if (searchedToDos.isNotEmpty) {
-      final indexInMainList = ref.watch(toDoProvider.notifier).getIndex(
-            widget.todo,
-          );
+    if (isSearchInitiated) {
+      deleteSearchListToDo(oldToDo);
+      ref.read(searchedToDoProvider.notifier).insert(todo, widget.index);
+      listManipulator.editToDo(
+          oldtodo: oldToDo, index: widget.index, newtodo: newToDo);
+    } else if (searchedToDos.isNotEmpty) {
       ref.read(searchedDateProvider.notifier).remove(widget.todo);
-      ref.read(searchedDateProvider.notifier).insert(
-            todo,
-            widget.index,
-          );
-      deletedMainListToDo(
-        widget.todo,
-      );
-      ref.read(toDoProvider.notifier).editToDo(
-            todo,
-            indexInMainList,
-          );
-      Navigator.of(context).pop();
-      return;
+      ref.read(searchedDateProvider.notifier).insert(newToDo, widget.index);
+      listManipulator.editToDo(
+          oldtodo: oldToDo, index: indexInMainList, newtodo: newToDo);
+    } else {
+      listManipulator.editToDo(
+          oldtodo: oldToDo, index: widget.index, newtodo: newToDo);
     }
-
-    deletedMainListToDo(widget.todo);
-    ref.read(toDoProvider.notifier).editToDo(todo, widget.index);
-    SqfLiteService().updateDataBaseValue(widget.todo, todo);
     Navigator.of(context).pop();
   }
 

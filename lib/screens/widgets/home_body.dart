@@ -3,10 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:to_do_app/backend/sqflite_service.dart';
+import 'package:to_do_app/services/backend/sqflite_service.dart';
 import 'package:to_do_app/theme/color_scheme.dart';
 import 'package:to_do_app/models/to_do.dart';
-import 'package:to_do_app/providers/searched_button_provider.dart';
+import 'package:to_do_app/providers/searched_initiated_provider.dart';
 import 'package:to_do_app/providers/searced_todo_provider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/providers/to_do_provider.dart';
@@ -70,18 +70,8 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
               title: const Text('Finish task '),
               content: const Text('Are you sure?'),
               actions: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context, false);
-                  },
-                  child: const Text('Cancel'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context, true);
-                  },
-                  child: const Text('Finish'),
-                ),
+                cancelButton(),
+                finishButton(),
               ],
             ),
           )
@@ -91,27 +81,35 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
               title: const Text('Finish task '),
               content: const Text('Are you sure?'),
               actions: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context, false);
-                  },
-                  child: const Text('Cancel'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context, true);
-                  },
-                  child: const Text('Finish'),
-                ),
+                cancelButton(),
+                finishButton(),
               ],
             ),
           ));
   }
 
+  Widget cancelButton() {
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.pop(context, false);
+      },
+      child: const Text('Cancel'),
+    );
+  }
+
+  Widget finishButton() {
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.pop(context, true);
+      },
+      child: const Text('Finish'),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Widget> bodys = [];
-    final isButtonPressed = ref.watch(buttonPressedProvider);
+    List<Widget> bodiesList = [];
+    final isSearchButtonPressed = ref.watch(isSearchInitiatedProvider);
     final searchedToDo = ref.watch(searchedToDoProvider);
     final listOfToDo = ref.watch(toDoProvider);
     final theme = ref.watch(settingsProvider);
@@ -133,7 +131,6 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
     if (listOfToDo.isNotEmpty) {
       for (int i = 0; i < headerName.length; i++) {
         String header = headerName[i];
-
         final editedList = listOfToDo
             .where((element) => element.taskDayClassification == header)
             .toList();
@@ -174,7 +171,7 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
           }).toList();
 
           // Add the header and the list of to-do item widgets to the body
-          bodys.add(Column(
+          bodiesList.add(Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
@@ -192,13 +189,13 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
         }
       }
       body = ListView.builder(
-        itemCount: bodys.length,
+        itemCount: bodiesList.length,
         itemBuilder: (context, index) {
-          return bodys[index];
+          return bodiesList[index];
         },
       );
     }
-    if (isButtonPressed) {
+    if (isSearchButtonPressed) {
       body = ListView.builder(
         itemCount: searchedToDo.length,
         itemBuilder: (context, index) {

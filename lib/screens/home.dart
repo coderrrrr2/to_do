@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:to_do_app/backend/shared_preferences_service.dart';
-import 'package:to_do_app/backend/sqflite_service.dart';
+import 'package:to_do_app/services/backend/shared_preferences_service.dart';
+import 'package:to_do_app/services/backend/sqflite_service.dart';
 import 'package:to_do_app/models/settings.dart';
 import 'package:to_do_app/models/to_do.dart';
-import 'package:to_do_app/providers/searched_button_provider.dart';
+import 'package:to_do_app/providers/searched_initiated_provider.dart';
 import 'package:to_do_app/providers/is_searching_provider.dart';
 import 'package:to_do_app/providers/searched_date_provider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
@@ -42,11 +42,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void updateIfSearchingValue(bool value) {
-    ref.watch(searchingProvider.notifier).setSearching(value);
+    ref.watch(isSearchingProvider.notifier).setSearching(value);
   }
 
   void setIfSearchButtonPressedValue(bool value) {
-    ref.read(buttonPressedProvider.notifier).setSearching(value);
+    ref.read(isSearchInitiatedProvider.notifier).setSearching(value);
   }
 
   List<ToDo> getToDos() {
@@ -135,7 +135,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isSearching = ref.watch(searchingProvider);
+    final isSearching = ref.watch(isSearchingProvider);
     return GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();

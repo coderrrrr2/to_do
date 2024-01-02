@@ -53,7 +53,8 @@ class SqfLiteService {
     await db.delete('user_todos', where: 'id == ?', whereArgs: [todo.id]);
   }
 
-  void updateDataBaseValue(ToDo oldtodo, ToDo newtodo) async {
+  void updateDataBaseValue(
+      {required ToDo oldtodo, required ToDo newtodo}) async {
     final db = await initializeDataBase();
     await db.update(
       'user_todos',

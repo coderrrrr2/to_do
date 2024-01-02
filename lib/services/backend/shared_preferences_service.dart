@@ -35,9 +35,4 @@ class SharedPreferencesService {
     String jsonString = json.encode(settingsMap);
     prefs.setString(key, jsonString);
   }
-
-  void removeSettingsFromSF() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove(key);
-  }
 }

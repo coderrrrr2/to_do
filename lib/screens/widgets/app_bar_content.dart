@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/models/to_do.dart';
-import 'package:to_do_app/providers/searched_button_provider.dart';
+import 'package:to_do_app/providers/searched_initiated_provider.dart';
 import 'package:to_do_app/providers/is_searching_provider.dart';
 import 'package:to_do_app/providers/searced_todo_provider.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
@@ -73,7 +73,7 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
   }
 
   void updateSearchingValue(bool value) {
-    ref.watch(searchingProvider.notifier).setSearching(value);
+    ref.watch(isSearchingProvider.notifier).setSearching(value);
   }
 
   void showErroMessageIfTextEmpty() {
@@ -86,15 +86,17 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
   }
 
   void passListToHomeScreen(
-      {required bool isButtonPressed, required List<ToDo> listOfToDo}) {
+      {required bool isSearchButtonPressed, required List<ToDo> listOfToDo}) {
     var searchedToDo = returnSearchedTasks(searchBarTextField.text, listOfToDo);
     if (searchedToDo.isEmpty && searchBarTextField.text != "") {
       _showAlertDialog(context);
       return;
     }
     ref.read(searchedToDoProvider.notifier).set(searchedToDo);
-    if (!isButtonPressed && searchedToDo.isNotEmpty) {
-      ref.read(buttonPressedProvider.notifier).setSearching(!isButtonPressed);
+    if (!isSearchButtonPressed && searchedToDo.isNotEmpty) {
+      ref
+          .read(isSearchInitiatedProvider.notifier)
+          .setSearching(!isSearchButtonPressed);
     }
   }
 
@@ -102,8 +104,8 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
   Widget build(BuildContext context) {
     // listens for changes and updates the variables
 
-    final isSearching = ref.watch(searchingProvider);
-    final isButtonPressed = ref.watch(buttonPressedProvider);
+    final isSearching = ref.watch(isSearchingProvider);
+    final isSearchButtonPressed = ref.watch(isSearchInitiatedProvider);
     final theme = ref.watch(settingsProvider);
     final listOfToDo = ref.watch(toDoProvider);
 
@@ -159,7 +161,7 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
                           onPressed: () {
                             showErroMessageIfTextEmpty();
                             passListToHomeScreen(
-                                isButtonPressed: isButtonPressed,
+                                isSearchButtonPressed: isSearchButtonPressed,
                                 listOfToDo: listOfToDo);
                           },
                           icon: const Icon(Icons.search)),
