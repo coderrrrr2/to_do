@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:multi_dropdown/multiselect_dropdown.dart';
 import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/providers/to_do_provider.dart';
@@ -15,13 +16,15 @@ class TasksScreen extends ConsumerStatefulWidget {
 }
 
 class _TasksScreenState extends ConsumerState<TasksScreen> {
+  final MultiSelectController<String> _controller = MultiSelectController();
+  List<ValueItem<String>> _selectedOptions = [];
+
   List<String> repeatDaysChoices = [
-    "No Repat",
-    "Once a day",
-    "Once a day(Mon-Fri)",
-    "Once a week",
-    "Once a month",
-    "Once a year",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
     "Everyday",
   ];
   final formKey = GlobalKey<FormState>();
@@ -100,181 +103,192 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
           appBar: AppBar(
             title: const Text('New Task'),
           ),
-          body: Column(mainAxisSize: MainAxisSize.min, children: [
-            Form(
-              key: formKey,
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(left: 15, top: 30),
-                        child: Text(
-                          "What is to be done",
-                          style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: theme.isLightMode
-                                  ? Theme.of(context).colorScheme.primary
-                                  : darkHeaderColour),
+          body: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(left: 15, top: 30),
+                          child: Text(
+                            "What is to be done",
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: theme.isLightMode
+                                    ? Theme.of(context).colorScheme.primary
+                                    : darkHeaderColour),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    height: 30,
-                    margin: const EdgeInsets.all(15),
-                    child: TextFormField(
-                      style: TextStyle(
-                        color: theme.isLightMode ? Colors.black : Colors.white,
-                      ),
-                      controller: taskController,
-                      decoration: InputDecoration(
-                        labelStyle: TextStyle(
+                      ],
+                    ),
+                    Container(
+                      height: 30,
+                      margin: const EdgeInsets.all(15),
+                      child: TextFormField(
+                        style: TextStyle(
                           color:
                               theme.isLightMode ? Colors.black : Colors.white,
                         ),
+                        controller: taskController,
+                        decoration: InputDecoration(
+                          labelStyle: TextStyle(
+                            color:
+                                theme.isLightMode ? Colors.black : Colors.white,
+                          ),
+                        ),
+                        keyboardType: TextInputType.text,
                       ),
-                      keyboardType: TextInputType.text,
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(left: 15),
+                          child: Text(
+                            "Due Date",
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: theme.isLightMode
+                                    ? Theme.of(context).colorScheme.primary
+                                    : darkHeaderColour),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Container(
+                          width: 322,
+                          margin: const EdgeInsets.all(15),
+                          child: Text(
+                            enteredDate == null
+                                ? "Date Not Set"
+                                : formatter.format(enteredDate!),
+                            style: TextStyle(
+                              color: theme.isLightMode
+                                  ? Colors.black
+                                  : Colors.white,
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: showDatePickerDialog,
+                          icon: const Icon(Icons.calendar_month),
+                          color:
+                              theme.isLightMode ? Colors.black : Colors.white,
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(left: 15),
+                          child: Text(
+                            "Due Time",
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: theme.isLightMode
+                                    ? Theme.of(context).colorScheme.primary
+                                    : darkHeaderColour),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.all(15),
+                          width: 300,
+                          child: Text(
+                            selectedTime == null
+                                ? "Time not set"
+                                : formatTime(selectedTime!),
+                            style: TextStyle(
+                              color: theme.isLightMode
+                                  ? Colors.black
+                                  : Colors.white,
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: showTimePickerDialog,
+                          icon: const Icon(Icons.timelapse),
+                          color:
+                              theme.isLightMode ? Colors.black : Colors.white,
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(left: 15),
+                    child: Text(
+                      "Repeat",
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: theme.isLightMode
+                              ? Theme.of(context).colorScheme.primary
+                              : darkHeaderColour),
                     ),
                   ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(left: 15),
-                        child: Text(
-                          "Due Date",
-                          style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: theme.isLightMode
-                                  ? Theme.of(context).colorScheme.primary
-                                  : darkHeaderColour),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Container(
-                        width: 322,
-                        margin: const EdgeInsets.all(15),
-                        child: Text(
-                          enteredDate == null
-                              ? "Date Not Set"
-                              : formatter.format(enteredDate!),
-                          style: TextStyle(
-                            color:
-                                theme.isLightMode ? Colors.black : Colors.white,
-                          ),
-                        ),
-                      ),
-                      const Spacer(),
-                      IconButton(
-                        onPressed: showDatePickerDialog,
-                        icon: const Icon(Icons.calendar_month),
-                        color: theme.isLightMode ? Colors.black : Colors.white,
-                      )
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(left: 15),
-                        child: Text(
-                          "Due Time",
-                          style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: theme.isLightMode
-                                  ? Theme.of(context).colorScheme.primary
-                                  : darkHeaderColour),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.all(15),
-                        width: 300,
-                        child: Text(
-                          selectedTime == null
-                              ? "Time not set"
-                              : formatTime(selectedTime!),
-                          style: TextStyle(
-                            color:
-                                theme.isLightMode ? Colors.black : Colors.white,
-                          ),
-                        ),
-                      ),
-                      const Spacer(),
-                      IconButton(
-                        onPressed: showTimePickerDialog,
-                        icon: const Icon(Icons.timelapse),
-                        color: theme.isLightMode ? Colors.black : Colors.white,
-                      )
-                    ],
-                  )
                 ],
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(left: 15),
-                  child: Text(
-                    "Repeat",
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: theme.isLightMode
-                            ? Theme.of(context).colorScheme.primary
-                            : darkHeaderColour),
+              Container(
+                margin: const EdgeInsets.all(15),
+                child: MultiSelectDropDown<String>(
+                  hint: 'Select Day/Days',
+                  dropdownHeight: 250,
+                  showClearIcon: true,
+                  controller: _controller,
+                  onOptionSelected: (options) {
+                    _selectedOptions = options;
+                  },
+                  options: repeatDaysChoices
+                      .map((item) => ValueItem(label: item, value: item))
+                      .toList(),
+                  maxItems: 5,
+                  selectionType: SelectionType.multi,
+                  chipConfig: ChipConfig(
+                      wrapType: WrapType.wrap,
+                      backgroundColor: Theme.of(context).colorScheme.primary),
+                  optionTextStyle: const TextStyle(fontSize: 14),
+                  selectedOptionIcon: Icon(
+                    Icons.check_circle,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
+                  selectedOptionTextColor:
+                      Theme.of(context).colorScheme.primary,
+                  dropdownMargin: 1,
+                  onOptionRemoved: (index, option) {
+                    _selectedOptions.remove(option);
+                  },
                 ),
-              ],
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                    margin: const EdgeInsets.all(15),
-                    child: Text(
-                      repeatDays,
-                      style: TextStyle(
-                        color: theme.isLightMode ? Colors.black : Colors.white,
-                      ),
-                    )),
-                const Spacer(),
-                DropdownButtonHideUnderline(
-                    child: DropdownButton(
-                        dropdownColor:
-                            theme.isLightMode ? Colors.white : Colors.black,
-                        items: repeatDaysChoices
-                            .map((item) => DropdownMenuItem<String>(
-                                value: item, child: Text(item)))
-                            .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            repeatDays = value!;
-                          });
-                        })),
-              ],
-            ),
-          ]),
+              ),
+            ],
+          ),
           floatingActionButton: !textformKeyIsEmpty
               ? FloatingActionButton(
                   onPressed: () {

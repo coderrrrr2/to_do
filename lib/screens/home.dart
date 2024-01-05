@@ -31,12 +31,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   late Future<void> todoFuture;
   late Future<Settings> settingsFuture;
+  late Future<void> loadingFuture;
 
   @override
   void initState() {
     super.initState();
     todoFuture = SqfLiteService().loadPlaces();
     settingsFuture = SharedPreferencesService().load();
+    loadingFuture = Future.wait([todoFuture, settingsFuture]);
     ref.read(toDoProvider.notifier).set();
     ref.read(settingsProvider.notifier).set();
   }
@@ -160,19 +162,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           floatingActionButton: FloatingActionButton(
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const TasksScreen(),
-                ));
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const TasksScreen(),
+                  ),
+                );
               },
               child: const Icon(Icons.add)),
           body: FutureBuilder(
-              future: Future.wait([todoFuture, settingsFuture]),
+              future: loadingFuture,
               builder: (context, snapshot) {
                 return snapshot.connectionState == ConnectionState.waiting
                     ? const Center(
                         child: CircularProgressIndicator(),
                       )
-                    : SafeArea(child: body);
+                    : SafeArea(
+                        child: body,
+                      );
               }),
         ));
   }
