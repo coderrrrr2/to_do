@@ -17,7 +17,7 @@ class TasksScreen extends ConsumerStatefulWidget {
 
 class _TasksScreenState extends ConsumerState<TasksScreen> {
   final MultiSelectController<String> _controller = MultiSelectController();
-  List<ValueItem<String>> _selectedOptions = [];
+  List<String> _selectedOptions = [];
 
   List<String> repeatDaysChoices = [
     "Monday",
@@ -33,7 +33,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
   bool textformKeyIsEmpty = true;
   bool isDateSelected = false;
   TimeOfDay? selectedTime;
-  String repeatDays = "No";
+  String? repeatDays;
   Color darkHeaderColour = const Color.fromARGB(255, 156, 81, 231);
 
   void showDatePickerDialog() async {
@@ -95,7 +95,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(settingsProvider);
-
+    repeatDays = _selectedOptions.join();
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -264,7 +264,8 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                   showClearIcon: true,
                   controller: _controller,
                   onOptionSelected: (options) {
-                    _selectedOptions = options;
+                    _selectedOptions =
+                        options.map((item) => item.value!).toList();
                   },
                   options: repeatDaysChoices
                       .map((item) => ValueItem(label: item, value: item))
@@ -282,9 +283,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                   selectedOptionTextColor:
                       Theme.of(context).colorScheme.primary,
                   dropdownMargin: 1,
-                  onOptionRemoved: (index, option) {
-                    _selectedOptions.remove(option);
-                  },
+                  onOptionRemoved: (index, option) {},
                 ),
               ),
             ],
@@ -292,12 +291,14 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
           floatingActionButton: !textformKeyIsEmpty
               ? FloatingActionButton(
                   onPressed: () {
-                    if (enteredDate != null && selectedTime != null) {
+                    if (enteredDate != null &&
+                        selectedTime != null &&
+                        repeatDays != '') {
                       submitformKey(ToDo(
                           taskName: taskController.text,
                           date: enteredDate!,
                           time: selectedTime!,
-                          repeatTaskDays: repeatDays));
+                          repeatTaskDays: repeatDays!));
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

@@ -123,6 +123,7 @@ class _AppBarContentState extends ConsumerState<AppBarContent> {
             },
             icon: const Icon(Icons.search)),
         PopupMenuButton<MenuAction>(
+          icon: const Icon(Icons.more_vert),
           itemBuilder: (context) {
             return [
               PopupMenuItem(
