@@ -8,12 +8,12 @@ import 'package:to_do_app/screens/home.dart';
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(child: ToDoApp()));
   FlutterNativeSplash.remove();
 }
 
-class MyApp extends ConsumerWidget {
-  const MyApp({Key? key}) : super(key: key);
+class ToDoApp extends ConsumerWidget {
+  const ToDoApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
