@@ -1,18 +1,23 @@
 import UIKit
 import Flutter
-// This is required for calling FlutterLocalNotificationsPlugin.setPluginRegistrantCallback method.
 import flutter_local_notifications
 
 @UIApplicationMain
-override func application(
-  _ application: UIApplication,
-  didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-  ) -> Bool {
-  // This is required to make any communication available in the action isolate.
-  FlutterLocalNotificationsPlugin.setPluginRegistrantCallback { (registry) in
-    GeneratedPluginRegistrant.register(with: registry)
-  }
+@objc class AppDelegate: FlutterAppDelegate {
 
-  ...
-  return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    override func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        if #available(iOS 10.0, *) {
+            UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+        }
+
+        // Your additional implementation for didFinishLaunchingWithOptions
+
+        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    }
+
+    // Other methods and properties can be added here
+
 }

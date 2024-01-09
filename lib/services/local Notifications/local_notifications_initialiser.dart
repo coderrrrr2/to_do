@@ -1,69 +1,63 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class LocalNotificationsInitializer {
-  void onDidReceiveLocalNotification(
-      int id, String? title, String? body, String? payload) async {
-    // display a dialog with the notification details, tap ok to go to another page
+  static final FlutterLocalNotificationsPlugin
+      _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  // Private constructor to prevent instantiation
+  LocalNotificationsInitializer._();
+
+  // Singleton instance
+  static final LocalNotificationsInitializer _instance =
+      LocalNotificationsInitializer._();
+
+  factory LocalNotificationsInitializer() {
+    return _instance;
   }
 
-  void onDidReceiveNotificationResponse(NotificationResponse notification) {}
+  FlutterLocalNotificationsPlugin get flutterLocalNotificationsPlugin {
+    return _flutterLocalNotificationsPlugin;
+  }
 
-  void initializePlugIns() {
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestNotificationsPermission();
-    // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('app_icon');
+  Future<void> initializePlugins() async {
     final DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
-            onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-    const LinuxInitializationSettings initializationSettingsLinux =
-        LinuxInitializationSettings(defaultActionName: 'Open notification');
+      // ...
+      notificationCategories: [
+        DarwinNotificationCategory(
+          'taskCategory',
+          actions: <DarwinNotificationAction>[
+            DarwinNotificationAction.plain(
+              'dismissAction',
+              'Dismiss',
+              options: <DarwinNotificationActionOption>{},
+            ),
+            DarwinNotificationAction.plain(
+              'finishAction',
+              'Mark as Finished',
+              options: <DarwinNotificationActionOption>{},
+            ),
+          ],
+          options: <DarwinNotificationCategoryOption>{
+            DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
+          },
+        )
+      ],
+    );
+    // Perform the initialization steps
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('app_icon');
+
     final InitializationSettings initializationSettings =
         InitializationSettings(
-            android: initializationSettingsAndroid,
-            iOS: initializationSettingsDarwin,
-            linux: initializationSettingsLinux);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsDarwin,
+    );
+
+    await _flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+    );
   }
 
-  void sendNotifications() {
-    DarwinInitializationSettings(
-        // ...
-        notificationCategories: [
-          DarwinNotificationCategory(
-            'demoCategory',
-            actions: <DarwinNotificationAction>[
-              DarwinNotificationAction.plain('id_1', 'Action 1'),
-              DarwinNotificationAction.plain(
-                'id_2',
-                'Action 2',
-                options: <DarwinNotificationActionOption>{
-                  DarwinNotificationActionOption.destructive,
-                },
-              ),
-              DarwinNotificationAction.plain(
-                'id_3',
-                'Action 3',
-                options: <DarwinNotificationActionOption>{
-                  DarwinNotificationActionOption.foreground,
-                },
-              ),
-            ],
-            options: <DarwinNotificationCategoryOption>{
-              DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
-            },
-          )
-        ]);
-  }
-
-  @pragma('vm:entry-point')
-  void notificationTapBackground(NotificationResponse notificationResponse) {
-    // handle action
-  }
+  // Add other methods for managing notifications, e.g., sendNotification, etc.
 }

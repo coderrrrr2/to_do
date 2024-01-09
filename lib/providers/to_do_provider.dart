@@ -1,12 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/models/to_do.dart';
-import 'package:to_do_app/services/backend/sqflite_service.dart';
+import 'package:to_do_app/services/sqflite/sqflite_service.dart';
 
 class ListManipulator extends StateNotifier<List<ToDo>> {
   ListManipulator() : super([]);
   SqfLiteService sqflite = SqfLiteService();
   void set() async {
     final todos = await sqflite.loadPlaces();
+
     state = todos;
   }
 

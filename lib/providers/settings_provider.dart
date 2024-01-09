@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:to_do_app/services/backend/shared_preferences_service.dart';
+import 'package:to_do_app/services/sharedPreferences/shared_preferences_service.dart';
 import 'package:to_do_app/models/settings.dart';
 
 class SettingsProvider extends StateNotifier<Settings> {
