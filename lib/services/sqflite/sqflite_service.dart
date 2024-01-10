@@ -17,14 +17,11 @@ class SqfLiteService {
 
   Future<Database> initializeDataBase() async {
     final dbPath = await sql.getDatabasesPath();
-    final database = await sql.openDatabase(
-      path.join(dbPath, 'Todos.db'),
-      onCreate: (db, version) {
-        // Your database creation logic here
-      },
-      version: 1,
-    );
-
+    final database = await sql.openDatabase(path.join(dbPath, 'Todos.db'),
+        onCreate: (db, version) {
+      db.execute(
+          "CREATE TABLE user_todos (id TEXT PRIMARY KEY, taskName TEXT, hour INTEGER, minute INTEGER, date TEXT, taskDayClassification TEXT, repeatTaskDays TEXT, isChecked INTEGER)");
+    }, version: 1);
     return database;
   }
 
