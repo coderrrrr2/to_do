@@ -5,20 +5,36 @@ import 'package:sqflite/sqflite.dart';
 import 'package:to_do_app/models/to_do.dart';
 
 class SqfLiteService {
+  static SqfLiteService? _instance;
+  late Database _dbInstance;
+
+  SqfLiteService._(); // Private constructor
+
+  factory SqfLiteService() {
+    _instance ??= SqfLiteService._();
+    return _instance!;
+  }
+
   Future<Database> initializeDataBase() async {
     final dbPath = await sql.getDatabasesPath();
-    final dbInstance = await sql.openDatabase(path.join(dbPath, 'Todos.db'),
-        onCreate: (dbInstance, version) {
-      return dbInstance.execute(
-          "CREATE TABLE user_todos (id TEXT PRIMARY KEY, taskName TEXT, hour INTEGER, minute INTEGER, date TEXT, taskDayClassification TEXT, repeatTaskDays TEXT, isChecked INTEGER)");
-    }, version: 1);
+    final database = await sql.openDatabase(
+      path.join(dbPath, 'Todos.db'),
+      onCreate: (db, version) {
+        // Your database creation logic here
+      },
+      version: 1,
+    );
 
-    return dbInstance;
+    return database;
+  }
+
+  Future<void> setDbInstance() async {
+    _dbInstance = await initializeDataBase();
   }
 
   Future<List<ToDo>> loadPlaces() async {
-    final db = await SqfLiteService().initializeDataBase();
-    final data = await db.query('user_todos');
+    await setDbInstance();
+    final data = await _dbInstance.query('user_todos');
     return data.map((row) {
       return ToDo(
         taskName: row['taskName'] as String,
@@ -35,39 +51,37 @@ class SqfLiteService {
   }
 
   void insertIntoDatabase(ToDo todo) async {
-    final db = await initializeDataBase();
-    db.insert('user_todos', {
+    _dbInstance.insert('user_todos', {
       'id': todo.id,
       'taskName': todo.taskName,
-      'hour': todo.time.hour, // Store hour separately
+      'hour': todo.time.hour,
       'minute': todo.time.minute,
       'date': todo.date.toString(),
       'taskDayClassification': todo.taskDayClassification,
       'repeatTaskDays': todo.repeatTaskDays,
-      'isChecked': todo.isChecked ? 1 : 0
+      'isChecked': todo.isChecked ? 1 : 0,
     });
   }
 
   void deleteFromDataBase(ToDo todo) async {
-    final db = await initializeDataBase();
-    await db.delete('user_todos', where: 'id == ?', whereArgs: [todo.id]);
+    await _dbInstance
+        .delete('user_todos', where: 'id == ?', whereArgs: [todo.id]);
   }
 
   void updateDataBaseValue(
       {required ToDo oldtodo, required ToDo newtodo}) async {
-    final db = await initializeDataBase();
-    await db.update(
+    await _dbInstance.update(
       'user_todos',
       {
         'taskName': newtodo.taskName,
-        'hour': newtodo.time.hour, // Store hour separately
+        'hour': newtodo.time.hour,
         'minute': newtodo.time.minute,
         'date': newtodo.date.toString(),
         'taskDayClassification': newtodo.taskDayClassification,
         'repeatTaskDays': newtodo.repeatTaskDays,
-        'isChecked': newtodo.isChecked ? 1 : 0
+        'isChecked': newtodo.isChecked ? 1 : 0,
       },
-      where: 'id = ?', // Use a WHERE clause to specify which record to update
+      where: 'id = ?',
       whereArgs: [oldtodo.id],
     );
   }

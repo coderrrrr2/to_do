@@ -7,7 +7,6 @@ class ListManipulator extends StateNotifier<List<ToDo>> {
   SqfLiteService sqflite = SqfLiteService();
   void set() async {
     final todos = await sqflite.loadPlaces();
-
     state = todos;
   }
 

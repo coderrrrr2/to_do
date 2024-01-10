@@ -8,15 +8,14 @@ class SettingsProvider extends StateNotifier<Settings> {
       : super(
           Settings(
             chosenLanguage: initialLanguage,
-            isLightMode: initialLightMode,
+            isLightMode: isLightMode,
             isNotifications: initialNotifications,
             timeFormat: initialTimeFormat,
           ),
         );
   // initial variables
   static const bool initialNotifications = false;
-
-  static bool initialLightMode =
+  static bool isLightMode =
       WidgetsBinding.instance.platformDispatcher.platformBrightness ==
           Brightness.light;
   static const String initialLanguage = 'Select Language';
