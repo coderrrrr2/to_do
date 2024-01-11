@@ -36,8 +36,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    todoFuture = SqfLiteService().loadPlaces();
     settingsFuture = SharedPreferencesService().load();
+    todoFuture = SqfLiteService().loadPlaces();
     loadingFuture = Future.wait([todoFuture, settingsFuture]);
     ref.read(toDoProvider.notifier).set();
     ref.read(settingsProvider.notifier).set();

@@ -1,4 +1,11 @@
+import 'package:flutter/material.dart';
+
 class Settings {
+  final bool isNotifications;
+  final bool isLightMode;
+  final String chosenLanguage;
+  final String timeFormat;
+
   const Settings({
     required this.isNotifications,
     required this.isLightMode,
@@ -6,10 +13,14 @@ class Settings {
     required this.timeFormat,
   });
 
-  final bool isNotifications;
-  final bool isLightMode;
-  final String chosenLanguage;
-  final String timeFormat;
+  // Named constructor with default values
+  Settings.defaults()
+      : isNotifications = false,
+        isLightMode =
+            WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+                Brightness.light,
+        chosenLanguage = 'Select Language',
+        timeFormat = '12-hour';
 
   Settings copyWith({
     bool? isNotifications,

@@ -20,10 +20,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     "Dutch",
   ];
 
-  bool isNotifications = false;
-  bool isLightMode = true;
+  late bool isNotifications;
+  late bool isLightMode;
   String selectedTimeValue = '';
-  String language = 'Select Language';
+  late String? language;
 
   //setter and getter methods
   void updateTimeFormatProvierValue(String selectedTimeValue) {
@@ -186,7 +186,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Container(
                       margin: const EdgeInsets.all(6),
                       child: Text(
-                        language,
+                        language!,
                         style: TextStyle(
                           color: theme.isLightMode == true
                               ? Colors.black

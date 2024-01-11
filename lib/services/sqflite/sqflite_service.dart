@@ -15,6 +15,10 @@ class SqfLiteService {
     return _instance!;
   }
 
+  Future<void> setDbInstance() async {
+    _dbInstance = await initializeDataBase();
+  }
+
   Future<Database> initializeDataBase() async {
     final dbPath = await sql.getDatabasesPath();
     final database = await sql.openDatabase(path.join(dbPath, 'Todos.db'),
@@ -23,10 +27,6 @@ class SqfLiteService {
           "CREATE TABLE user_todos (id TEXT PRIMARY KEY, taskName TEXT, hour INTEGER, minute INTEGER, date TEXT, taskDayClassification TEXT, repeatTaskDays TEXT, isChecked INTEGER)");
     }, version: 1);
     return database;
-  }
-
-  Future<void> setDbInstance() async {
-    _dbInstance = await initializeDataBase();
   }
 
   Future<List<ToDo>> loadPlaces() async {
