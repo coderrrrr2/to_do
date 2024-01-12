@@ -12,7 +12,6 @@ class LocalNotificationsService {
     return _instance;
   }
 
-  LocalNotificationsService._internal();
   Future<void> showNotificationsWithActions(Platform platform) async {
     var notificationDetails;
     if (platform == Platform.isAndroid) {

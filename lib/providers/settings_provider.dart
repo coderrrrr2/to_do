@@ -2,26 +2,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do_app/services/sharedPreferences/shared_preferences_service.dart';
 import 'package:to_do_app/models/settings.dart';
 
-const bool initialNotifications = false;
-const String initialLanguage = 'Select Language';
-const String initialTimeFormat = '12-hour';
+final SharedPreferencesService _sfService = SharedPreferencesService();
 
 class SettingsProvider extends StateNotifier<Settings> {
-  final SharedPreferencesService _sfService = SharedPreferencesService();
-
-  SettingsProvider() : super(Settings.defaults());
-
-  Settings getSettingsValue() {
-    return state;
-  }
-
-  void initializeDeviceTheme() {
-    // Set isLightMode based on the device theme
-  }
+  SettingsProvider(Settings initialSettings) : super(initialSettings);
 
   void set() async {
-    final setting = await _sfService.load();
-    state = setting;
+    final setting = _sfService.load();
+    state = await setting;
   }
 
   void changeLanguage(String language) {
@@ -51,5 +39,22 @@ class SettingsProvider extends StateNotifier<Settings> {
 
 final settingsProvider =
     StateNotifierProvider<SettingsProvider, Settings>((ref) {
-  return SettingsProvider();
+  Settings initialSettings = Settings(
+      isNotifications: true,
+      isLightMode: true,
+      chosenLanguage: '',
+      timeFormat: 'timeFormat');
+  print("sss");
+  ref.watch(settingsValueProvider).whenData((value) {
+    initialSettings = value;
+    print("eeee");
+  });
+  print("pppp");
+
+  return SettingsProvider(initialSettings);
+});
+
+final settingsValueProvider = FutureProvider<Settings>((ref) async {
+  final initialSettings = await _sfService.load();
+  return initialSettings;
 });
