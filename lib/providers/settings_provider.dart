@@ -41,15 +41,13 @@ final settingsProvider =
     StateNotifierProvider<SettingsProvider, Settings>((ref) {
   Settings initialSettings = Settings(
       isNotifications: true,
-      isLightMode: true,
-      chosenLanguage: '',
-      timeFormat: 'timeFormat');
-  print("sss");
+      isLightMode: false,
+      chosenLanguage: 'Select  Language',
+      timeFormat: '');
+
   ref.watch(settingsValueProvider).whenData((value) {
     initialSettings = value;
-    print("eeee");
   });
-  print("pppp");
 
   return SettingsProvider(initialSettings);
 });

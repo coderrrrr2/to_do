@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class LocalNotificationsInitializer {
@@ -19,10 +20,21 @@ class LocalNotificationsInitializer {
     return _flutterLocalNotificationsPlugin;
   }
 
-  Future<void> initializePlugins() async {
+  void initialisePlugin(InitializationSettings initializationSettings) async {
+    await _flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onDidReceiveNotificationResponse:
+            (NotificationResponse notificationResponse) async {
+      // ...
+    }, onDidReceiveBackgroundNotificationResponse: notificationTapBackground);
+  }
+
+  Future<void> initializeNotificationCategories() async {
     final DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
-      // ...
+      // ...  requestSoundPermission: false,
+      requestBadgePermission: false,
+      requestAlertPermission: false,
+      onDidReceiveLocalNotification: onDidReceiveLocalNotification,
       notificationCategories: [
         DarwinNotificationCategory(
           'taskCategory',
@@ -53,11 +65,35 @@ class LocalNotificationsInitializer {
       android: initializationSettingsAndroid,
       iOS: initializationSettingsDarwin,
     );
-
-    await _flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+      '...',
+      '...',
+      actions: <AndroidNotificationAction>[
+        AndroidNotificationAction('id_1', 'Action 1'),
+        AndroidNotificationAction('id_2', 'Action 2'),
+      ],
     );
+    const NotificationDetails(android: androidNotificationDetails);
+
+    initialisePlugin(initializationSettings);
   }
 
-  // Add other methods for managing notifications, e.g., sendNotification, etc.
+  @pragma('vm:entry-point')
+  void notificationTapBackground(NotificationResponse notificationResponse) {
+    // handle action
+  }
+  void notificationResponse(NotificationResponse notificationResponse) {
+    final String? payload = notificationResponse.payload;
+    if (notificationResponse.payload != null) {
+      log('notification payload: $payload');
+    }
+
+    // Add other methods for managing notifications, e.g., sendNotification, etc.
+  }
+
+  void onDidReceiveLocalNotification(
+      int id, String? title, String? body, String? payload) async {
+    // display a dialog with the notification details, tap ok to go to another page
+  }
 }
