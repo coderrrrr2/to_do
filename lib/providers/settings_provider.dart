@@ -39,7 +39,7 @@ class SettingsProvider extends StateNotifier<Settings> {
 
 final settingsProvider =
     StateNotifierProvider<SettingsProvider, Settings>((ref) {
-  Settings initialSettings = Settings(
+  Settings initialSettings = const Settings(
       isNotifications: true,
       isLightMode: false,
       chosenLanguage: 'Select  Language',

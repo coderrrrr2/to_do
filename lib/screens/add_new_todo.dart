@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:multi_dropdown/multiselect_dropdown.dart';
 import 'package:to_do_app/models/to_do.dart';
 import 'package:to_do_app/providers/settings_provider.dart';
 import 'package:to_do_app/providers/to_do_provider.dart';
+import 'package:to_do_app/screens/set_repeat_task_screen.dart';
 
 final formatter = DateFormat.yMd();
 
@@ -16,24 +16,14 @@ class TasksScreen extends ConsumerStatefulWidget {
 }
 
 class _TasksScreenState extends ConsumerState<TasksScreen> {
-  final MultiSelectController<String> _controller = MultiSelectController();
-  List<String> _selectedOptions = [];
-
-  List<String> repeatDaysChoices = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Everyday",
-  ];
+ 
   final formKey = GlobalKey<FormState>();
   final taskController = TextEditingController();
   DateTime? enteredDate;
   bool textformKeyIsEmpty = true;
   bool isDateSelected = false;
   TimeOfDay? selectedTime;
-  String? repeatDays;
+  String repeatDays = "No";
   Color darkHeaderColour = const Color.fromARGB(255, 156, 81, 231);
 
   void showDatePickerDialog() async {
@@ -95,7 +85,6 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(settingsProvider);
-    repeatDays = _selectedOptions.join();
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -256,36 +245,39 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                   ),
                 ],
               ),
-              Container(
-                margin: const EdgeInsets.all(15),
-                child: MultiSelectDropDown<String>(
-                  hint: 'Select Day/Days',
-                  dropdownHeight: 250,
-                  showClearIcon: true,
-                  controller: _controller,
-                  onOptionSelected: (options) {
-                    _selectedOptions =
-                        options.map((item) => item.value!).toList();
-                  },
-                  options: repeatDaysChoices
-                      .map((item) => ValueItem(label: item, value: item))
-                      .toList(),
-                  maxItems: 5,
-                  selectionType: SelectionType.multi,
-                  chipConfig: ChipConfig(
-                      wrapType: WrapType.wrap,
-                      backgroundColor: Theme.of(context).colorScheme.primary),
-                  optionTextStyle: const TextStyle(fontSize: 14),
-                  selectedOptionIcon: Icon(
-                    Icons.check_circle,
-                    color: Theme.of(context).colorScheme.primary,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  InkWell(
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const RepeatTaskScreen(),
+                    )),
+                    child: Container(
+                      width: 400,
+                      margin: const EdgeInsets.all(15),
+                      child: Row(
+                        children: [
+                          Text(
+                            repeatDays,
+                            style: TextStyle(
+                              color: theme.isLightMode
+                                  ? Colors.black
+                                  : Colors.white,
+                            ),
+                          ),
+                          const Spacer(),
+                          Icon(
+                            (Icons.add_call),
+                            color:
+                                theme.isLightMode ? Colors.black : Colors.white,
+                          )
+                        ],
+                      ),
+                    ),
                   ),
-                  selectedOptionTextColor:
-                      Theme.of(context).colorScheme.primary,
-                  dropdownMargin: 1,
-                  onOptionRemoved: (index, option) {},
-                ),
-              ),
+                  const Spacer(),
+                ],
+              )
             ],
           ),
           floatingActionButton: !textformKeyIsEmpty
@@ -298,7 +290,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                           taskName: taskController.text,
                           date: enteredDate!,
                           time: selectedTime!,
-                          repeatTaskDays: repeatDays!));
+                          repeatTaskDays: repeatDays));
                       return;
                     }
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

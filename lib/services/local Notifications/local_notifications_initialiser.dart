@@ -20,7 +20,9 @@ class LocalNotificationsInitializer {
     return _flutterLocalNotificationsPlugin;
   }
 
-  void initialisePlugin(InitializationSettings initializationSettings) async {
+  void initialisePlugin() async {
+    var initializationSettings = await LocalNotificationsInitializer()
+        .initializeNotificationCategories();
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse:
             (NotificationResponse notificationResponse) async {
@@ -28,7 +30,7 @@ class LocalNotificationsInitializer {
     }, onDidReceiveBackgroundNotificationResponse: notificationTapBackground);
   }
 
-  Future<void> initializeNotificationCategories() async {
+  Future<InitializationSettings> initializeNotificationCategories() async {
     final DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
       // ...  requestSoundPermission: false,
@@ -59,12 +61,6 @@ class LocalNotificationsInitializer {
     // Perform the initialization steps
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('app_icon');
-
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsDarwin,
-    );
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
       '...',
@@ -76,11 +72,15 @@ class LocalNotificationsInitializer {
     );
     const NotificationDetails(android: androidNotificationDetails);
 
-    initialisePlugin(initializationSettings);
+    return InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsDarwin,
+    );
   }
 
   @pragma('vm:entry-point')
-  void notificationTapBackground(NotificationResponse notificationResponse) {
+  static void notificationTapBackground(
+      NotificationResponse notificationResponse) {
     // handle action
   }
   void notificationResponse(NotificationResponse notificationResponse) {

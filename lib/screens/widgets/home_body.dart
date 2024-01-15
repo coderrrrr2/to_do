@@ -33,12 +33,17 @@ class _HomeBodyState extends ConsumerState<HomeBody> {
     DateTime currentDate = DateTime.now();
     DateTime nextWeek = currentDate.add(const Duration(days: 7));
     DateTime nextMonth = currentDate.add(const Duration(days: 30));
+    DateTime lastWeek = currentDate.subtract(const Duration(days: 7));
+    DateTime lastMonth = currentDate.subtract(const Duration(days: 30));
 
     return [
       if (currentDate.isBefore(nextWeek)) "Due This Week",
       if (currentDate.isBefore(nextMonth)) "Due Next Week",
       if (nextMonth.month == currentDate.month) "Due Later This Month",
       if (nextMonth.month != currentDate.month) "Due Next Month",
+      if (lastWeek.isBefore(currentDate)) "Due Last Week",
+      if (lastMonth.month == currentDate.month) "Due Last Month",
+      if (lastMonth.month != currentDate.month) "Due Earlier This Month",
       "Due Later"
     ];
   }

@@ -79,7 +79,9 @@ class LocalNotificationsService {
     return await flutterLocalNotificationsPlugin.getActiveNotifications();
   }
 
-  void scheduleNotifications(ToDo todo) async {
+  void scheduleNotifications(
+    ToDo todo,
+  ) async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
         'scheduled title',
